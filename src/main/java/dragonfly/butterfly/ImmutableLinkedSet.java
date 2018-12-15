@@ -521,25 +521,17 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj == null) {
-            return false;
-        }
-        if(obj instanceof ImmutableLinkedSet<?>) {
-            return this.equals(this.startNode, ((ImmutableLinkedSet<?>)obj).startNode);
-        } else {
-            return false;
-        }
-    }
-
-    private final boolean equals(final ImmutableLinkedSetNode<?> immutableLinkedSetNode1, final ImmutableLinkedSetNode<?> immutableLinkedSetNode2) {
-        if(immutableLinkedSetNode1 == null && immutableLinkedSetNode2 == null) {
+        if(obj != null && obj instanceof ImmutableLinkedSet) {
+            if(!(this.startNode == null && ((ImmutableLinkedSet)obj).startNode() == null)) {
+                if (this.startNode == null || ((ImmutableLinkedSet) obj).startNode == null) {
+                    return false;
+                } else {
+                    if ((!this.startNode.equals(((ImmutableLinkedSet) obj).startNode))) {
+                        return false;
+                    }
+                }
+            }
             return true;
-        }
-        if(immutableLinkedSetNode1 == null || immutableLinkedSetNode2 == null) {
-            return false;
-        }
-        if(immutableLinkedSetNode1.equals(immutableLinkedSetNode2)) {
-            return this.equals(immutableLinkedSetNode1.next(), immutableLinkedSetNode2.next());
         } else {
             return false;
         }
@@ -547,15 +539,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @Override
     public final int hashCode() {
-        return this.getClass().hashCode() + this.length + this.valueType.hashCode() + this.hashCode(0, this.startNode, 0) + this.comparator.hashCode();
-    }
-
-    private final int hashCode(final Integer hashCode, final ImmutableLinkedSetNode<V> currentNode, final int currentIndex) {
-        if(currentNode != null) {
-            return this.hashCode(hashCode + currentNode.hashCode() * currentIndex, currentNode.next(), currentIndex + 1);
-        } else {
-            return hashCode;
-        }
+        return this.getClass().hashCode() + (this.startNode != null ? this.startNode.hashCode() : 0);
     }
 
     @Override
@@ -565,22 +549,11 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @Override
     public final String toString() {
-        return this.toString(new StringBuffer(), this.startNode);
-    }
-
-    private final String toString(final StringBuffer stringBuffer, final ImmutableLinkedSetNode<V> currentNode) {
-        if(currentNode != null) {
-            if(this.startNode == currentNode) {
-                stringBuffer.append("{");
-            }
-            if(currentNode.next() != null) {
-                return this.toString(stringBuffer.append(currentNode.toString()).append(", "), currentNode.next());
-            } else {
-                return this.toString(stringBuffer.append(currentNode.toString()).append("}"), currentNode.next());
-            }
-        } else {
-            return stringBuffer.toString();
-        }
+        return new StringBuffer()
+                .append("{")
+                .append((this.startNode != null ? this.startNode.toString() : "null"))
+                .append("}")
+                .toString();
     }
 
     public final Class valueType() {

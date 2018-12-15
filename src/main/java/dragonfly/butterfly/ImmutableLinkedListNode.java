@@ -15,7 +15,25 @@ public final class ImmutableLinkedListNode<V> implements Serializable, Cloneable
     @Override
     public final boolean equals(final Object obj) {
         if(obj != null && obj instanceof ImmutableLinkedListNode<?>) {
-            return super.equals(obj);
+            if(!(this.value == null && ((ImmutableLinkedListNode)obj).value() == null)) {
+                if(this.value == null || ((ImmutableLinkedListNode)obj).value() == null) {
+                    return false;
+                } else {
+                    if(!(this.value.equals(((ImmutableLinkedListNode)obj).value()))) {
+                        return false;
+                    }
+                }
+            }
+            if(!(this.next == null && ((ImmutableLinkedListNode)obj).next() == null)) {
+                if(this.next == null || ((ImmutableLinkedListNode)obj).next() == null) {
+                    return false;
+                } else {
+                    if(!(this.next.equals(((ImmutableLinkedListNode)obj).next()))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         } else {
             return false;
         }
@@ -23,8 +41,7 @@ public final class ImmutableLinkedListNode<V> implements Serializable, Cloneable
 
     @Override
     public final int hashCode() {
-        return this.getClass().hashCode() +
-                (this.value != null ? this.value.hashCode() : 0);
+        return super.hashCode();
     }
 
     @Override
@@ -35,7 +52,11 @@ public final class ImmutableLinkedListNode<V> implements Serializable, Cloneable
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.value != null ? this.value.toString() : ""))
+                .append("{")
+                .append((this.value != null ? this.value.toString() : "null"))
+                .append(",")
+                .append((this.next != null ? this.next.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

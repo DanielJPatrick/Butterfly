@@ -525,25 +525,17 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj == null) {
-            return false;
-        }
-        if(obj instanceof ImmutableLinkedMap<?, ?>) {
-            return this.equals(this.startNode, ((ImmutableLinkedMap<?, ?>)obj).startNode);
-        } else {
-            return false;
-        }
-    }
-
-    private final boolean equals(final ImmutableLinkedMapNode<?, ?> immutableLinkedMapNode1, final ImmutableLinkedMapNode<?, ?> immutableLinkedMapNode2) {
-        if(immutableLinkedMapNode1 == null && immutableLinkedMapNode2 == null) {
+        if(obj != null && obj instanceof ImmutableLinkedMap) {
+            if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode() == null)) {
+                if (this.startNode == null || ((ImmutableLinkedMap) obj).startNode == null) {
+                    return false;
+                } else {
+                    if ((!this.startNode.equals(((ImmutableLinkedMap) obj).startNode))) {
+                        return false;
+                    }
+                }
+            }
             return true;
-        }
-        if(immutableLinkedMapNode1 == null || immutableLinkedMapNode2 == null) {
-            return false;
-        }
-        if(immutableLinkedMapNode1.equals(immutableLinkedMapNode2)) {
-            return this.equals(immutableLinkedMapNode1.next(), immutableLinkedMapNode2.next());
         } else {
             return false;
         }
@@ -551,15 +543,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     @Override
     public final int hashCode() {
-        return this.getClass().hashCode() + this.length + this.valueType.hashCode() + this.hashCode(0, this.startNode, 0) + this.comparator.hashCode();
-    }
-
-    private final int hashCode(final Integer hashCode, final ImmutableLinkedMapNode<K, V> currentNode, final int currentIndex) {
-        if(currentNode != null) {
-            return this.hashCode(hashCode + currentNode.hashCode() * currentIndex, currentNode.next(), currentIndex + 1);
-        } else {
-            return hashCode;
-        }
+        return this.getClass().hashCode() + (this.startNode != null ? this.startNode.hashCode() : 0);
     }
 
     @Override
@@ -569,22 +553,11 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     @Override
     public final String toString() {
-        return this.toString(new StringBuffer(), this.startNode);
-    }
-
-    private final String toString(final StringBuffer stringBuffer, final ImmutableLinkedMapNode<K, V> currentNode) {
-        if(currentNode != null) {
-            if(this.startNode == currentNode) {
-                stringBuffer.append("{");
-            }
-            if(currentNode.next() != null) {
-                return this.toString(stringBuffer.append(currentNode.toString()).append(", "), currentNode.next());
-            } else {
-                return this.toString(stringBuffer.append(currentNode.toString()).append("}"), currentNode.next());
-            }
-        } else {
-            return stringBuffer.toString();
-        }
+        return new StringBuffer()
+                .append("{")
+                .append((this.startNode != null ? this.startNode.toString() : "null"))
+                .append("}")
+                .toString();
     }
 
     public final Class valueType() {

@@ -23,6 +23,9 @@ public final class ImmutableLinkedMapNode<K, V> implements Serializable, Cloneab
             if(!(this.value.equals(((ImmutableLinkedMapNode)obj).value()))) {
                 return false;
             }
+            if(!(this.next.equals(((ImmutableLinkedMapNode)obj).next()))) {
+                return false;
+            }
             return true;
         } else {
             return false;
@@ -33,7 +36,8 @@ public final class ImmutableLinkedMapNode<K, V> implements Serializable, Cloneab
     public final int hashCode() {
         return this.getClass().hashCode() +
                 (this.key != null ? this.key.hashCode() : 0) +
-                (this.value != null ? this.value.hashCode() : 0);
+                (this.value != null ? this.value.hashCode() : 0) +
+                (this.next != null ? this.next.hashCode() : 0);
     }
 
     @Override
@@ -44,8 +48,13 @@ public final class ImmutableLinkedMapNode<K, V> implements Serializable, Cloneab
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.key != null ? this.key.toString() : ""))
-                .append((this.value != null ? this.value.toString() : ""))
+                .append("{")
+                .append((this.key != null ? this.key.toString() : "null"))
+                .append(",")
+                .append((this.value != null ? this.value.toString() : "null"))
+                .append(",")
+                .append((this.next != null ? this.next.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

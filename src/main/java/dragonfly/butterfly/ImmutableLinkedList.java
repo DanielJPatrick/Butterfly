@@ -109,7 +109,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     }
 
     private final ImmutableLinkedList<V> create(final ImmutableLinkedList<V> immutableLinkedList, final V[] values, final int currentIndex) {
-        if(currentIndex < immutableLinkedList.length) {
+        if(currentIndex < values.length) {
             return this.create(immutableLinkedList.add(values[currentIndex]), values, currentIndex + 1);
         } else {
             return immutableLinkedList;
@@ -393,25 +393,17 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj == null) {
-            return false;
-        }
-        if(obj instanceof ImmutableLinkedList<?>) {
-            return this.equals(this.startNode, ((ImmutableLinkedList<?>)obj).startNode);
-        } else {
-            return false;
-        }
-    }
-
-    private final boolean equals(final ImmutableLinkedListNode<?> immutableLinkedListNode1, final ImmutableLinkedListNode<?> immutableLinkedListNode2) {
-        if(immutableLinkedListNode1 == null && immutableLinkedListNode2 == null) {
+        if(obj != null && obj instanceof ImmutableLinkedList) {
+            if(!(this.startNode == null && ((ImmutableLinkedList)obj).startNode() == null)) {
+                if (this.startNode == null || ((ImmutableLinkedList) obj).startNode == null) {
+                    return false;
+                } else {
+                    if ((!this.startNode.equals(((ImmutableLinkedList) obj).startNode))) {
+                        return false;
+                    }
+                }
+            }
             return true;
-        }
-        if(immutableLinkedListNode1 == null || immutableLinkedListNode2 == null) {
-            return false;
-        }
-        if(immutableLinkedListNode1.equals(immutableLinkedListNode2)) {
-            return this.equals(immutableLinkedListNode1.next(), immutableLinkedListNode2.next());
         } else {
             return false;
         }
@@ -419,15 +411,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     @Override
     public final int hashCode() {
-        return this.getClass().hashCode() + this.length + this.valueType.hashCode() + this.hashCode(0, this.startNode, 0) + this.comparator.hashCode();
-    }
-
-    private final int hashCode(final Integer hashCode, final ImmutableLinkedListNode<V> currentNode, final int currentIndex) {
-        if(currentNode != null) {
-            return this.hashCode(hashCode + currentNode.hashCode() * currentIndex, currentNode.next(), currentIndex + 1);
-        } else {
-            return hashCode;
-        }
+        return this.getClass().hashCode() + (this.startNode != null ? this.startNode.hashCode() : 0);
     }
 
     @Override
@@ -437,23 +421,13 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     @Override
     public final String toString() {
-        return this.toString(new StringBuffer(), this.startNode);
+        return new StringBuffer()
+                .append("{")
+                .append((this.startNode != null ? this.startNode.toString() : "null"))
+                .append("}")
+                .toString();
     }
 
-    private final String toString(final StringBuffer stringBuffer, final ImmutableLinkedListNode<V> currentNode) {
-        if(currentNode != null) {
-            if(this.startNode == currentNode) {
-                stringBuffer.append("{");
-            }
-            if(currentNode.next() != null) {
-                return this.toString(stringBuffer.append(currentNode.toString()).append(", "), currentNode.next());
-            } else {
-                return this.toString(stringBuffer.append(currentNode.toString()).append("}"), currentNode.next());
-            }
-        } else {
-            return stringBuffer.toString();
-        }
-    }
 
     public final Class valueType() {
         return this.valueType;

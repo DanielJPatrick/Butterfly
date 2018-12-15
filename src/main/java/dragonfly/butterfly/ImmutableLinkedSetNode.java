@@ -18,6 +18,9 @@ public final class ImmutableLinkedSetNode<V> implements Serializable, Cloneable 
             if(!(this.value.equals(((ImmutableLinkedSetNode)obj).value()))) {
                 return false;
             }
+            if(!(this.next.equals(((ImmutableLinkedSetNode)obj).next()))) {
+                return false;
+            }
             return true;
         } else {
             return false;
@@ -27,7 +30,8 @@ public final class ImmutableLinkedSetNode<V> implements Serializable, Cloneable 
     @Override
     public final int hashCode() {
         return this.getClass().hashCode() +
-                (this.value != null ? this.value.hashCode() : 0);
+                (this.value != null ? this.value.hashCode() : 0) +
+                (this.next != null ? this.next.hashCode() : 0);
     }
 
     @Override
@@ -38,7 +42,11 @@ public final class ImmutableLinkedSetNode<V> implements Serializable, Cloneable 
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.value != null ? this.value.toString() : ""))
+                .append("{")
+                .append((this.value != null ? this.value.toString() : "null"))
+                .append(",")
+                .append((this.next != null ? this.next.toString() : "null"))
+                .append("}")
                 .toString();
     }
 
