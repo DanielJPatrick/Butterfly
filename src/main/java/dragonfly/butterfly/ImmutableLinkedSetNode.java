@@ -15,20 +15,20 @@ public final class ImmutableLinkedSetNode<V> implements Serializable, Cloneable 
     @Override
     public final boolean equals(final Object obj) {
         if(obj != null && obj instanceof ImmutableLinkedSetNode<?>) {
-            if(!(this.value == null && ((ImmutableLinkedSetNode)obj).value() == null)) {
-                if(this.value == null || ((ImmutableLinkedSetNode)obj).value() == null) {
+            if(!(this.value == null && ((ImmutableLinkedSetNode)obj).value == null)) {
+                if(this.value == null || ((ImmutableLinkedSetNode)obj).value == null) {
                     return false;
                 } else {
-                    if(!(this.value.equals(((ImmutableLinkedSetNode)obj).value()))) {
+                    if(!(this.value.equals(((ImmutableLinkedSetNode)obj).value))) {
                         return false;
                     }
                 }
             }
-            if(!(this.next == null && ((ImmutableLinkedSetNode)obj).next() == null)) {
-                if(this.next == null || ((ImmutableLinkedSetNode)obj).next() == null) {
+            if(!(this.next == null && ((ImmutableLinkedSetNode)obj).next == null)) {
+                if(this.next == null || ((ImmutableLinkedSetNode)obj).next == null) {
                     return false;
                 } else {
-                    if(!(this.next.equals(((ImmutableLinkedSetNode)obj).next()))) {
+                    if(!(this.next.equals(((ImmutableLinkedSetNode)obj).next))) {
                         return false;
                     }
                 }

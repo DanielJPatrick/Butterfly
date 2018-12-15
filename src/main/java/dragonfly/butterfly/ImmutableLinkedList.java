@@ -394,7 +394,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     @Override
     public final boolean equals(final Object obj) {
         if(obj != null && obj instanceof ImmutableLinkedList) {
-            if(!(this.startNode == null && ((ImmutableLinkedList)obj).startNode() == null)) {
+            if(!(this.startNode == null && ((ImmutableLinkedList)obj).startNode == null)) {
                 if (this.startNode == null || ((ImmutableLinkedList) obj).startNode == null) {
                     return false;
                 } else {

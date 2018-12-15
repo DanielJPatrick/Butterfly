@@ -526,7 +526,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     @Override
     public final boolean equals(final Object obj) {
         if(obj != null && obj instanceof ImmutableLinkedMap) {
-            if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode() == null)) {
+            if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode == null)) {
                 if (this.startNode == null || ((ImmutableLinkedMap) obj).startNode == null) {
                     return false;
                 } else {
