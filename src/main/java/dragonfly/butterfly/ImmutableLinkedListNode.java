@@ -41,7 +41,9 @@ public final class ImmutableLinkedListNode<V> implements Serializable, Cloneable
 
     @Override
     public final int hashCode() {
-        return super.hashCode();
+        return this.getClass().hashCode() +
+                (this.value != null ? this.value.hashCode() : 0) +
+                (this.next != null ? this.next.hashCode() : 0);
     }
 
     @Override
