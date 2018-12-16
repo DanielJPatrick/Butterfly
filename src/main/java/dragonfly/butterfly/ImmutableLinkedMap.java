@@ -525,20 +525,22 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj != null && obj instanceof ImmutableLinkedMap) {
-            if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode == null)) {
-                if (this.startNode == null || ((ImmutableLinkedMap) obj).startNode == null) {
-                    return false;
-                } else {
-                    if ((!this.startNode.equals(((ImmutableLinkedMap) obj).startNode))) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        } else {
+        if(obj == null) {
             return false;
         }
+        if(!(obj instanceof ImmutableLinkedMap)) {
+            return false;
+        }
+        if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode == null)) {
+            if (this.startNode == null || ((ImmutableLinkedMap) obj).startNode == null) {
+                return false;
+            } else {
+                if ((!this.startNode.equals(((ImmutableLinkedMap) obj).startNode))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

@@ -359,13 +359,21 @@ public final class Column implements Serializable, Cloneable {
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.name != null ? this.name.toString() : ""))
-                .append((this.fromTableName != null ? "     " + this.fromTableName.toString() : ""))
-                .append((this.dataType != null ? "     " + this.dataType.toString() : ""))
-                .append((this.defaultValue != null ? "     " + this.defaultValue.toString() : ""))
-                .append((this.notNull != null ? "     " + this.notNull.toString() : ""))
-                .append((this.foreignKey != null ? "     " + this.foreignKey.toString() : ""))
-                .append((this.primaryKey != null ? "     " + this.primaryKey.toString() : ""))
+                .append("{")
+                .append((this.name != null ? this.name.toString() : "null"))
+                .append(",")
+                .append((this.fromTableName != null ? this.fromTableName.toString() : "null"))
+                .append(",")
+                .append((this.dataType != null ? this.dataType.toString() : "null"))
+                .append(",")
+                .append((this.defaultValue != null ? this.defaultValue.toString() : "null"))
+                .append(",")
+                .append((this.notNull != null ? this.notNull.toString() : "null"))
+                .append(",")
+                .append((this.foreignKey != null ? this.foreignKey.toString() : "null"))
+                .append(",")
+                .append((this.primaryKey != null ? this.primaryKey.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

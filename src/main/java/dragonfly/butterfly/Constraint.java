@@ -66,8 +66,9 @@ public abstract class Constraint implements Serializable, Cloneable {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append((this.name != null ? this.name.toString() : ""))
-                .append((this.fromTableName != null ? "     " + this.fromTableName.toString() : ""))
+                .append((this.name != null ? this.name.toString() : "null"))
+                .append(",")
+                .append((this.fromTableName != null ? this.fromTableName.toString() : "null"))
                 .toString();
     }
 

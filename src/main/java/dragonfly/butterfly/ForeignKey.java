@@ -80,10 +80,15 @@ public final class ForeignKey extends Constraint implements Serializable, Clonea
     @Override
     public final String toString() {
         return new StringBuilder()
+                .append("{")
                 .append(super.toString())
-                .append((this.fromColumnName != null ? "     " + this.fromColumnName.toString() : ""))
-                .append((this.toTableName != null ? "     " + this.toTableName.toString() : ""))
-                .append((this.toColumnName != null ? "     " + this.toColumnName.toString() : ""))
+                .append(",")
+                .append((this.fromColumnName != null ? this.fromColumnName.toString() : "null"))
+                .append(",")
+                .append((this.toTableName != null ? this.toTableName.toString() : "null"))
+                .append(",")
+                .append((this.toColumnName != null ? this.toColumnName.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

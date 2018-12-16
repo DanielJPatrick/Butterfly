@@ -65,9 +65,13 @@ public class DefaultValue extends Constraint {
     @Override
     public final String toString() {
         return new StringBuilder()
+                .append("{")
                 .append(super.toString())
-                .append((this.fromColumnName != null ? "     " + this.fromColumnName.toString() : ""))
-                .append((this.value != null ? "     " + this.value.toString() : ""))
+                .append(",")
+                .append((this.fromColumnName != null ? this.fromColumnName.toString() : "null"))
+                .append(",")
+                .append((this.value != null ? this.value.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

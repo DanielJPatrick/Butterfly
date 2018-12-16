@@ -49,8 +49,11 @@ public final class Check extends Constraint implements Serializable, Cloneable{
     @Override
     public final String toString() {
         return new StringBuilder()
+                .append("{")
                 .append(super.toString())
-                .append((this.condition != null ? "     " + this.condition.toString() : ""))
+                .append(",")
+                .append((this.condition != null ? this.condition.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

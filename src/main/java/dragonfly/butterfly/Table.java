@@ -11,102 +11,8 @@ public final class Table implements ITable, Serializable, Cloneable {
     @SuppressWarnings("unchecked")
     private Table(final ImmutableLinkedList<Character> name) {
         this.name = name;
-        this.columns = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Column>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Column.class,
-                new Comparator<ImmutableLinkedList<Character>>() {
-                    @Override
-                    public int compare(ImmutableLinkedList<Character> o1, ImmutableLinkedList<Character> o2) {
-                        if (o1 == null && o2 == null) {
-                            return 0;
-                        } else if (o1 == null) {
-                            return -1;
-                        } else if (o2 == null) {
-                            return 1;
-                        }
-                        if (o1.length() == o2.length() && o1.contains(o2,
-                                new Comparator<ImmutableLinkedListNode<Character>>() {
-                                    @Override
-                                    public int compare(ImmutableLinkedListNode<Character> o1, ImmutableLinkedListNode<Character> o2) {
-                                        if(o1 == null && o2 == null) {
-                                            return 0;
-                                        } else if(o1 == null || o2 == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value() == null && o2.value() == null) {
-                                            return 0;
-                                        } else if(o1.value() == null || o2.value() == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value().equals(o2.value())) {
-                                            return 0;
-                                        } else {
-                                            if(o1.hashCode() >= o2.hashCode()) {
-                                                return 1;
-                                            } else {
-                                                return -1;
-                                            }
-                                        }
-                                    }
-                                })
-                                ) {
-                            return 0;
-                        } else {
-                            if(o1.hashCode() >= o2.hashCode()) {
-                                return 1;
-                            } else {
-                                return -1;
-                            }
-                        }
-                    }
-                }
-        );
-        this.constraints = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Constraint.class,
-                new Comparator<ImmutableLinkedList<Character>>() {
-                    @Override
-                    public int compare(ImmutableLinkedList<Character> o1, ImmutableLinkedList<Character> o2) {
-                        if (o1 == null && o2 == null) {
-                            return 0;
-                        } else if (o1 == null) {
-                            return -1;
-                        } else if (o2 == null) {
-                            return 1;
-                        }
-                        if (o1.length() == o2.length() && o1.contains(o2,
-                                new Comparator<ImmutableLinkedListNode<Character>>() {
-                                    @Override
-                                    public int compare(ImmutableLinkedListNode<Character> o1, ImmutableLinkedListNode<Character> o2) {
-                                        if(o1 == null && o2 == null) {
-                                            return 0;
-                                        } else if(o1 == null || o2 == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value() == null && o2.value() == null) {
-                                            return 0;
-                                        } else if(o1.value() == null || o2.value() == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value().equals(o2.value())) {
-                                            return 0;
-                                        } else {
-                                            if(o1.hashCode() >= o2.hashCode()) {
-                                                return 1;
-                                            } else {
-                                                return -1;
-                                            }
-                                        }
-                                    }
-                                })
-                                ) {
-                            return 0;
-                        } else {
-                            if(o1.hashCode() >= o2.hashCode()) {
-                                return 1;
-                            } else {
-                                return -1;
-                            }
-                        }
-                    }
-                }
-        );
+        this.columns = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Column>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Column.class);
+        this.constraints = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Constraint.class);
     }
 
     private Table(final ImmutableLinkedList<Character> name, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint> constraints) {
@@ -316,31 +222,31 @@ public final class Table implements ITable, Serializable, Cloneable {
         if(!(obj instanceof Table)) {
             return false;
         }
-        if((this.name == null && ((Table)obj).name == null)) {
-
-        } else if(this.name == null || ((Table)obj).name == null) {
-            return false;
-        } else {
-            if(!(this.name.equals(((Table)obj).name))) {
+        if(!(this.name == null && ((Table)obj).name == null)) {
+            if(this.name == null || ((Table)obj).name == null) {
                 return false;
+            } else {
+                if (!(this.name.equals(((Table) obj).name))) {
+                    return false;
+                }
             }
         }
-        if((this.columns == null && ((Table)obj).columns == null)) {
-
-        } else if(this.columns == null || ((Table)obj).columns == null) {
-            return false;
-        } else {
-            if (!(this.columns.equals(((Table)obj).columns))) {
+        if(!(this.columns == null && ((Table)obj).columns == null)) {
+            if(this.columns == null || ((Table)obj).columns == null) {
                 return false;
+            } else {
+                if (!(this.columns.equals(((Table) obj).columns))) {
+                    return false;
+                }
             }
         }
-        if((this.constraints == null && ((Table)obj).constraints == null)) {
-
-        } else if(this.constraints == null || ((Table)obj).constraints == null) {
-            return false;
-        } else {
-            if (!(this.constraints.equals(((Table)obj).constraints))) {
+        if(!(this.constraints == null && ((Table)obj).constraints == null)) {
+            if(this.constraints == null || ((Table)obj).constraints == null) {
                 return false;
+            } else {
+                if (!(this.constraints.equals(((Table) obj).constraints))) {
+                    return false;
+                }
             }
         }
         return true;
@@ -362,9 +268,13 @@ public final class Table implements ITable, Serializable, Cloneable {
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.name != null ? this.name.toString() : ""))
-                .append((this.columns != null ? "     " + this.columns.toString() : ""))
-                .append((this.constraints != null ? "     " + this.constraints.toString() : ""))
+                .append("{")
+                .append((this.name != null ? this.name.toString() : "null"))
+                .append(",")
+                .append((this.columns != null ? this.columns.toString() : "null"))
+                .append(",")
+                .append((this.constraints != null ? this.constraints.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

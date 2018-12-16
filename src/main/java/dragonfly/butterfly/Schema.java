@@ -7,54 +7,7 @@ public final class Schema implements Serializable, Cloneable {
     private final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> tables;
 
     private Schema(final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> tables) {
-        this.tables = tables.set(
-                new Comparator<ImmutableLinkedList<Character>>() {
-                    @Override
-                    public int compare(ImmutableLinkedList<Character> o1, ImmutableLinkedList<Character> o2) {
-                        if (o1 == null && o2 == null) {
-                            return 0;
-                        } else if (o1 == null) {
-                            return -1;
-                        } else if (o2 == null) {
-                            return 1;
-                        }
-                        if (o1.length() == o2.length() && o1.contains(o2,
-                                new Comparator<ImmutableLinkedListNode<Character>>() {
-                                    @Override
-                                    public int compare(ImmutableLinkedListNode<Character> o1, ImmutableLinkedListNode<Character> o2) {
-                                        if(o1 == null && o2 == null) {
-                                            return 0;
-                                        } else if(o1 == null || o2 == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value() == null && o2.value() == null) {
-                                            return 0;
-                                        } else if(o1.value() == null || o2.value() == null) {
-                                            return -1;
-                                        }
-                                        if(o1.value().equals(o2.value())) {
-                                            return 0;
-                                        } else {
-                                            if(o1.hashCode() >= o2.hashCode()) {
-                                                return 1;
-                                            } else {
-                                                return -1;
-                                            }
-                                        }
-                                    }
-                                })
-                                ) {
-                            return 0;
-                        } else {
-                            if(o1.hashCode() >= o2.hashCode()) {
-                                return 1;
-                            } else {
-                                return -1;
-                            }
-                        }
-                    }
-                }
-        );
+        this.tables = tables;
     }
 
     @Override
@@ -91,7 +44,9 @@ public final class Schema implements Serializable, Cloneable {
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.tables != null ? this.tables.toString() : ""))
+                .append("{")
+                .append((this.tables != null ? this.tables.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

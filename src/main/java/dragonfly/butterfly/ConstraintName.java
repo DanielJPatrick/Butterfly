@@ -48,7 +48,9 @@ public final class ConstraintName implements Serializable, Cloneable {
     @Override
     public final String toString() {
         return new StringBuilder()
-                .append((this.name != null ? this.name.toString() : ""))
+                .append("{")
+                .append((this.name != null ? this.name.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

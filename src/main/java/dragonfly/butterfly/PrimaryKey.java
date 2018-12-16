@@ -8,52 +8,7 @@ public final class PrimaryKey extends Constraint implements Serializable, Clonea
 
     PrimaryKey(final ImmutableLinkedList<Character> name, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final ImmutableLinkedList<Character> fromTableName) {
         super(name, fromTableName);
-        this.columnNames = columnNames.set(new Comparator<ImmutableLinkedList<Character>>() {
-            @Override
-            public int compare(ImmutableLinkedList<Character> o1, ImmutableLinkedList<Character> o2) {
-                if (o1 == null && o2 == null) {
-                    return 0;
-                } else if (o1 == null) {
-                    return -1;
-                } else if (o2 == null) {
-                    return 1;
-                }
-                if (o1.length() == o2.length() && o1.contains(o2,
-                        new Comparator<ImmutableLinkedListNode<Character>>() {
-                            @Override
-                            public int compare(ImmutableLinkedListNode<Character> o1, ImmutableLinkedListNode<Character> o2) {
-                                if(o1 == null && o2 == null) {
-                                    return 0;
-                                } else if(o1 == null || o2 == null) {
-                                    return -1;
-                                }
-                                if(o1.value() == null && o2.value() == null) {
-                                    return 0;
-                                } else if(o1.value() == null || o2.value() == null) {
-                                    return -1;
-                                }
-                                if(o1.value().equals(o2.value())) {
-                                    return 0;
-                                } else {
-                                    if(o1.hashCode() >= o2.hashCode()) {
-                                        return 1;
-                                    } else {
-                                        return -1;
-                                    }
-                                }
-                            }
-                        })
-                        ) {
-                    return 0;
-                } else {
-                    if(o1.hashCode() >= o2.hashCode()) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            }
-        });
+        this.columnNames = columnNames;
     }
 
     @Override
@@ -94,8 +49,10 @@ public final class PrimaryKey extends Constraint implements Serializable, Clonea
     @Override
     public final String toString() {
         return new StringBuilder()
+                .append("{")
                 .append(super.toString())
-                .append((this.columnNames != null ? "     " + this.columnNames.toString() : ""))
+                .append((this.columnNames != null ? this.columnNames.toString() : "null"))
+                .append("}")
                 .toString();
     }
 

@@ -521,20 +521,22 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj != null && obj instanceof ImmutableLinkedSet) {
-            if(!(this.startNode == null && ((ImmutableLinkedSet)obj).startNode == null)) {
-                if (this.startNode == null || ((ImmutableLinkedSet) obj).startNode == null) {
-                    return false;
-                } else {
-                    if ((!this.startNode.equals(((ImmutableLinkedSet) obj).startNode))) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        } else {
+        if(obj == null) {
             return false;
         }
+        if(!(obj instanceof ImmutableLinkedSet)) {
+            return false;
+        }
+        if(!(this.startNode == null && ((ImmutableLinkedSet)obj).startNode == null)) {
+            if (this.startNode == null || ((ImmutableLinkedSet) obj).startNode == null) {
+                return false;
+            } else {
+                if ((!this.startNode.equals(((ImmutableLinkedSet) obj).startNode))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

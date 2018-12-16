@@ -16,38 +16,40 @@ public final class ImmutableLinkedMapNode<K, V> implements Serializable, Cloneab
 
     @Override
     public final boolean equals(final Object obj) {
-        if(obj != null && obj instanceof ImmutableLinkedMapNode<?, ?>) {
-            if(!(this.key == null && ((ImmutableLinkedMapNode)obj).key == null)) {
-                if(this.key == null || ((ImmutableLinkedMapNode)obj).key == null) {
-                    return false;
-                } else {
-                    if(!(this.key.equals(((ImmutableLinkedMapNode)obj).key))) {
-                        return false;
-                    }
-                }
-            }
-            if(!(this.value == null && ((ImmutableLinkedMapNode)obj).value == null)) {
-                if(this.value == null || ((ImmutableLinkedMapNode)obj).value == null) {
-                    return false;
-                } else {
-                    if(!(this.value.equals(((ImmutableLinkedMapNode)obj).value))) {
-                        return false;
-                    }
-                }
-            }
-            if(!(this.next == null && ((ImmutableLinkedMapNode)obj).next == null)) {
-                if(this.next == null || ((ImmutableLinkedMapNode)obj).next == null) {
-                    return false;
-                } else {
-                    if(!(this.next.equals(((ImmutableLinkedMapNode)obj).next))) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        } else {
+        if(obj == null) {
             return false;
         }
+        if(!(obj instanceof ImmutableLinkedMapNode<?, ?>)) {
+            return false;
+        }
+        if(!(this.key == null && ((ImmutableLinkedMapNode)obj).key == null)) {
+            if(this.key == null || ((ImmutableLinkedMapNode)obj).key == null) {
+                return false;
+            } else {
+                if(!(this.key.equals(((ImmutableLinkedMapNode)obj).key))) {
+                    return false;
+                }
+            }
+        }
+        if(!(this.value == null && ((ImmutableLinkedMapNode)obj).value == null)) {
+            if(this.value == null || ((ImmutableLinkedMapNode)obj).value == null) {
+                return false;
+            } else {
+                if(!(this.value.equals(((ImmutableLinkedMapNode)obj).value))) {
+                    return false;
+                }
+            }
+        }
+        if(!(this.next == null && ((ImmutableLinkedMapNode)obj).next == null)) {
+            if(this.next == null || ((ImmutableLinkedMapNode)obj).next == null) {
+                return false;
+            } else {
+                if(!(this.next.equals(((ImmutableLinkedMapNode)obj).next))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

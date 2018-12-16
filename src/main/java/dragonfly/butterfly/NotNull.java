@@ -54,8 +54,10 @@ public final class NotNull extends Constraint implements Serializable, Cloneable
     @Override
     public final String toString() {
         return new StringBuilder()
+                .append("{")
                 .append(super.toString())
-                .append((this.fromColumnName != null ? "     " + this.fromColumnName.toString() : ""))
+                .append((this.fromColumnName != null ? this.fromColumnName.toString() : "null"))
+                .append("}")
                 .toString();
     }
 
