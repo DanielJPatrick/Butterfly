@@ -573,9 +573,13 @@ public final class Table implements ITable, Serializable, Cloneable {
         @Override
         public final String toString() {
             return new StringBuilder()
-                    .append((this.name != null ? this.name.toString() : ""))
-                    .append((this.columns != null ? "     " + this.columns.toString() : ""))
-                    .append((this.constraints != null ? "     " + this.constraints.toString() : ""))
+                    .append("{")
+                    .append((this.name != null ? this.name.toString() : "null"))
+                    .append(",")
+                    .append((this.columns != null ? this.columns.toString() : "null"))
+                    .append(",")
+                    .append((this.constraints != null ? this.constraints.toString() : "null"))
+                    .append("}")
                     .toString();
         }
 
