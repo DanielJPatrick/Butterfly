@@ -6,8 +6,18 @@ import android.database.sqlite.SQLiteDatabase;
 public abstract class ButterflyHelper {
 
     @SuppressWarnings("unchecked")
-    public static final ImmutableLinkedList<ImmutableLinkedList<Character>> generateDatabaseSql(final Schema schema) {
-        return generateTablesSql(new ImmutableLinkedList(ImmutableLinkedList.class), schema.getTables(), schema.getTables().length() - 1);
+    public static final String[] generateDatabaseSql(final Schema schema) {
+        final ImmutableLinkedList<ImmutableLinkedList<Character>> sql = generateTablesSql(new ImmutableLinkedList(ImmutableLinkedList.class), schema.getTables(), schema.getTables().length() - 1);
+        return generateDatabaseSql(sql.startNode(), new String[sql.length()], 0);
+    }
+
+    private static final String[] generateDatabaseSql(final ImmutableLinkedListNode<ImmutableLinkedList<Character>> currentNode, final String[] strSql, final int currentIndex) {
+        if(currentNode != null) {
+            strSql[currentIndex] = Character.toString(currentNode.value().getValues(true));
+            return generateDatabaseSql(currentNode.next(), strSql, currentIndex + 1);
+        } else {
+            return strSql;
+        }
     }
 
     private static final ImmutableLinkedList<ImmutableLinkedList<Character>> generateTablesSql(final ImmutableLinkedList<ImmutableLinkedList<Character>> sql, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> tables, final int currentIndex) {

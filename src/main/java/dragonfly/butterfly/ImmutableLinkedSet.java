@@ -243,17 +243,9 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     private final ImmutableLinkedSetNode<V> update(final ImmutableLinkedSetNode<V> currentNode, final ImmutableLinkedSetNode<V> nodeToReplace, final ImmutableLinkedSetNode<V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode.value(), nodeToReplace.value()) == 0) {
-                if (newNode.next() == null) {
-                    return new ImmutableLinkedSetNode<V>(newNode.value(), null);
-                } else {
-                    return new ImmutableLinkedSetNode<V>(newNode.value(), this.update(newNode.next(), null, null));
-                }
+                return new ImmutableLinkedSetNode<V>(newNode.value(), this.update(newNode.next(), null, null));
             } else {
-                if (currentNode.next() == null) {
-                    return new ImmutableLinkedSetNode<V>(currentNode.value(), null);
-                } else {
-                    return new ImmutableLinkedSetNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
-                }
+                return new ImmutableLinkedSetNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
         } else {
             return null;

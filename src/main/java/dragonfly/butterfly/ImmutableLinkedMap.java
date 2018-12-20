@@ -225,17 +225,9 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     private final ImmutableLinkedMapNode<K, V> update(final ImmutableLinkedMapNode<K, V> currentNode, final ImmutableLinkedMapNode<K, V> nodeToReplace, final ImmutableLinkedMapNode<K, V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode.key(), nodeToReplace.key()) == 0) {
-                if (newNode.next() == null) {
-                    return new ImmutableLinkedMapNode<K, V>(newNode.key(), newNode.value(), null);
-                } else {
-                    return new ImmutableLinkedMapNode<K, V>(newNode.key(), newNode.value(), this.update(newNode.next(), null, null));
-                }
+                return new ImmutableLinkedMapNode<K, V>(newNode.key(), newNode.value(), this.update(newNode.next(), null, null));
             } else {
-                if (currentNode.next() == null) {
-                    return new ImmutableLinkedMapNode<K, V>(currentNode.key(), currentNode.value(), null);
-                } else {
-                    return new ImmutableLinkedMapNode<K, V>(currentNode.key(), currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
-                }
+                return new ImmutableLinkedMapNode<K, V>(currentNode.key(), currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
         } else {
             return null;

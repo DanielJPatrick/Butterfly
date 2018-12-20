@@ -159,17 +159,9 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final ImmutableLinkedListNode<V> nodeToReplace, final ImmutableLinkedListNode<V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode, nodeToReplace) == 0) {
-                if (newNode.next() == null) {
-                    return new ImmutableLinkedListNode<V>(newNode.value(), null);
-                } else {
-                    return new ImmutableLinkedListNode<V>(newNode.value(), this.update(newNode.next(), null, null));
-                }
+                return new ImmutableLinkedListNode<V>(newNode.value(), this.update(newNode.next(), null, null));
             } else {
-                if (currentNode.next() == null) {
-                    return new ImmutableLinkedListNode<V>(currentNode.value(), null);
-                } else {
-                    return new ImmutableLinkedListNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
-                }
+                return new ImmutableLinkedListNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
         } else {
             return null;

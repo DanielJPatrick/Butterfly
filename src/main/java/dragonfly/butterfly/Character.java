@@ -112,15 +112,9 @@ public final class Character implements Serializable, Cloneable {
     }
 
     private static final char[] toCharArray(final Character[] characters, final char[] chars, final int currentIndex) {
-        if(characters.length > currentIndex) {
-            if(chars == null) {
-                final char[] tempChars = new char[characters.length];
-                tempChars[currentIndex] = characters[currentIndex].getCharValue();
-                return toCharArray(characters, tempChars, currentIndex + 1);
-            } else {
-                chars[currentIndex] = characters[currentIndex].getCharValue();
-                return toCharArray(characters, chars, currentIndex + 1);
-            }
+        if(currentIndex < characters.length) {
+            chars[currentIndex] = characters[currentIndex].getCharValue();
+            return toCharArray(characters, chars, currentIndex + 1);
         } else {
             return chars;
         }
