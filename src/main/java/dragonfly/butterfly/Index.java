@@ -5,7 +5,7 @@ import java.io.Serializable;
 public final class Index extends Constraint implements Serializable, Cloneable {
     private final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames;
 
-    public Index(final ImmutableLinkedList<Character> name, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final ImmutableLinkedList<Character> fromTableName) {
+    Index(final ImmutableLinkedList<Character> name, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final ImmutableLinkedList<Character> fromTableName) {
         super(name, fromTableName);
         this.columnNames = columnNames;
     }
@@ -15,7 +15,7 @@ public final class Index extends Constraint implements Serializable, Cloneable {
         if(obj == null) {
             return false;
         }
-        if(!(obj instanceof Unique)) {
+        if(!(obj instanceof Index)) {
             return false;
         }
         if(!(super.equals(obj))) {

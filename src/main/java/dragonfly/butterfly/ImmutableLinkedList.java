@@ -392,10 +392,10 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
             return false;
         }
         if(!(this.startNode == null && ((ImmutableLinkedList)obj).startNode == null)) {
-            if (this.startNode == null || ((ImmutableLinkedList) obj).startNode == null) {
+            if (this.startNode == null || ((ImmutableLinkedList)obj).startNode == null) {
                 return false;
             } else {
-                if ((!this.startNode.equals(((ImmutableLinkedList) obj).startNode))) {
+                if ((!this.startNode.equals(((ImmutableLinkedList)obj).startNode))) {
                     return false;
                 }
             }

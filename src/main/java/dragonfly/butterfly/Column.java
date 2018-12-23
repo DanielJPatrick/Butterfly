@@ -274,7 +274,7 @@ public final class Column implements Serializable, Cloneable {
             return false;
         }
         if(!(this.name == null && ((Column)obj).name == null)) {
-            if(this.name == null || ((Column) obj).name == null) {
+            if(this.name == null || ((Column)obj).name == null) {
                 return false;
             } else {
                 if(!(this.name.equals(((Column)obj).name))) {
@@ -283,7 +283,7 @@ public final class Column implements Serializable, Cloneable {
             }
         }
         if(!(this.fromTableName == null && ((Column)obj).fromTableName == null)) {
-            if(this.fromTableName == null || ((Column) obj).fromTableName == null) {
+            if(this.fromTableName == null || ((Column)obj).fromTableName == null) {
                 return false;
             } else {
                 if(!(this.fromTableName.equals(((Column)obj).fromTableName))) {
@@ -301,37 +301,37 @@ public final class Column implements Serializable, Cloneable {
             }
         }
         if(!(this.defaultValue == null && ((Column)obj).defaultValue == null)) {
-            if(this.defaultValue == null || ((Column) obj).defaultValue == null) {
+            if(this.defaultValue == null || ((Column)obj).defaultValue == null) {
                 return false;
             } else {
-                if(!(this.defaultValue.equals(((Column) obj).defaultValue))) {
+                if(!(this.defaultValue.equals(((Column)obj).defaultValue))) {
                     return false;
                 }
             }
         }
         if(!(this.notNull == null && ((Column)obj).notNull == null)) {
-            if(this.notNull == null || ((Column) obj).notNull == null) {
+            if(this.notNull == null || ((Column)obj).notNull == null) {
                 return false;
             } else {
-                if(!(this.notNull.equals(((Column) obj).notNull))) {
+                if(!(this.notNull.equals(((Column)obj).notNull))) {
                     return false;
                 }
             }
         }
         if(!(this.foreignKey == null && ((Column)obj).foreignKey == null)) {
-            if(this.foreignKey == null || ((Column) obj).foreignKey == null) {
+            if(this.foreignKey == null || ((Column)obj).foreignKey == null) {
                 return false;
             } else {
-                if(!(this.foreignKey.equals(((Column) obj).foreignKey))) {
+                if(!(this.foreignKey.equals(((Column)obj).foreignKey))) {
                     return false;
                 }
             }
         }
         if(!(this.primaryKey == null && ((Column)obj).primaryKey == null)) {
-            if(this.primaryKey == null || ((Column) obj).primaryKey == null) {
+            if(this.primaryKey == null || ((Column)obj).primaryKey == null) {
                 return false;
             } else {
-                if(!(this.primaryKey.equals(((Column) obj).primaryKey))) {
+                if(!(this.primaryKey.equals(((Column)obj).primaryKey))) {
                     return false;
                 }
             }

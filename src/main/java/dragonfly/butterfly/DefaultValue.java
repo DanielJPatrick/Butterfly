@@ -5,13 +5,13 @@ public class DefaultValue extends Constraint {
     private final ImmutableLinkedList<Character> fromColumnName;
     private final ImmutableLinkedList<Character> value;
 
-    public DefaultValue(final ImmutableLinkedList<Character> value) {
+    DefaultValue(final ImmutableLinkedList<Character> value) {
         super();
         this.fromColumnName = null;
         this.value = value;
     }
 
-    public DefaultValue(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> fromTableName, final ImmutableLinkedList<Character> fromColumnName, final ImmutableLinkedList<Character> value) {
+    DefaultValue(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> fromTableName, final ImmutableLinkedList<Character> fromColumnName, final ImmutableLinkedList<Character> value) {
         super(name, fromTableName);
         this.fromColumnName = fromColumnName;
         this.value = value;

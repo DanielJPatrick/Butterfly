@@ -28,10 +28,10 @@ public final class NotNull extends Constraint implements Serializable, Cloneable
             return false;
         }
         if(!(this.fromColumnName == null && ((NotNull)obj).fromColumnName == null)) {
-            if(this.fromColumnName == null || ((NotNull) obj).fromColumnName == null) {
+            if(this.fromColumnName == null || ((NotNull)obj).fromColumnName == null) {
                 return false;
             } else {
-                if(!(this.fromColumnName.equals(((NotNull) obj).fromColumnName))) {
+                if(!(this.fromColumnName.equals(((NotNull)obj).fromColumnName))) {
                     return false;
                 }
             }

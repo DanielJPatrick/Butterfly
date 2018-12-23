@@ -8,7 +8,7 @@ public final class ForeignKey extends Constraint implements Serializable, Clonea
     private final ImmutableLinkedList<Character> toTableName;
     private final ImmutableLinkedList<Character> toColumnName;
 
-    public ForeignKey(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> toTableName, final ImmutableLinkedList<Character> toColumnName) {
+    ForeignKey(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> toTableName, final ImmutableLinkedList<Character> toColumnName) {
         super(name);
         this.fromColumnName = null;
         this.toTableName = toTableName;
@@ -34,28 +34,28 @@ public final class ForeignKey extends Constraint implements Serializable, Clonea
             return false;
         }
         if(!(this.fromColumnName == null && ((ForeignKey)obj).fromColumnName == null)) {
-            if(this.fromColumnName == null || ((ForeignKey) obj).fromColumnName == null) {
+            if(this.fromColumnName == null || ((ForeignKey)obj).fromColumnName == null) {
                 return false;
             } else {
-                if(!(this.fromColumnName.equals(((ForeignKey) obj).fromColumnName))) {
+                if(!(this.fromColumnName.equals(((ForeignKey)obj).fromColumnName))) {
                     return false;
                 }
             }
         }
         if(!(this.toTableName == null && ((ForeignKey)obj).toTableName == null)) {
-            if(this.toTableName == null || ((ForeignKey) obj).toTableName == null) {
+            if(this.toTableName == null || ((ForeignKey)obj).toTableName == null) {
                 return false;
             } else {
-                if(!(this.toTableName.equals(((ForeignKey) obj).toTableName))) {
+                if(!(this.toTableName.equals(((ForeignKey)obj).toTableName))) {
                     return false;
                 }
             }
         }
         if(!(this.toColumnName == null && ((ForeignKey)obj).toColumnName == null)) {
-            if(this.toColumnName == null || ((ForeignKey) obj).toColumnName == null) {
+            if(this.toColumnName == null || ((ForeignKey)obj).toColumnName == null) {
                 return false;
             } else {
-                if(!(this.toColumnName.equals(((ForeignKey) obj).toColumnName))) {
+                if(!(this.toColumnName.equals(((ForeignKey)obj).toColumnName))) {
                     return false;
                 }
             }

@@ -31,19 +31,19 @@ public abstract class Constraint implements Serializable, Cloneable {
             return false;
         }
         if(!(this.name == null && ((Constraint)obj).name == null)) {
-            if(this.name == null || ((Constraint) obj).name == null) {
+            if(this.name == null || ((Constraint)obj).name == null) {
                 return false;
             } else {
-                if(!(this.name.equals(((Constraint) obj).name))) {
+                if(!(this.name.equals(((Constraint)obj).name))) {
                     return false;
                 }
             }
         }
         if(!(this.fromTableName == null && ((Constraint)obj).fromTableName == null)) {
-            if(this.fromTableName == null || ((Constraint) obj).fromTableName == null) {
+            if(this.fromTableName == null || ((Constraint)obj).fromTableName == null) {
                 return false;
             } else {
-                if(!(this.fromTableName.equals(((Constraint) obj).fromTableName))) {
+                if(!(this.fromTableName.equals(((Constraint)obj).fromTableName))) {
                     return false;
                 }
             }

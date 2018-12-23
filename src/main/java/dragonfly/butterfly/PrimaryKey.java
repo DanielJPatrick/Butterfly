@@ -23,10 +23,10 @@ public final class PrimaryKey extends Constraint implements Serializable, Clonea
             return false;
         }
         if(!(this.columnNames == null && ((PrimaryKey)obj).columnNames == null)) {
-            if(this.columnNames == null || ((PrimaryKey) obj).columnNames == null) {
+            if(this.columnNames == null || ((PrimaryKey)obj).columnNames == null) {
                 return false;
             } else {
-                if(!(this.columnNames.equals(((PrimaryKey) obj).columnNames))) {
+                if(!(this.columnNames.equals(((PrimaryKey)obj).columnNames))) {
                     return false;
                 }
             }

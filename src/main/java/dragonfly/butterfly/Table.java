@@ -9,24 +9,23 @@ public final class Table implements ITable, Serializable, Cloneable {
     private final ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint> constraints;
 
     @SuppressWarnings("unchecked")
-    private Table(final ImmutableLinkedList<Character> name) {
+    public Table(final String name) {
+        this.name = Utils.toImmutableLinkedList(name);
+        this.columns = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Column>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Column.class);
+        this.constraints = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Constraint.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    Table(final ImmutableLinkedList<Character> name) {
         this.name = name;
         this.columns = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Column>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Column.class);
         this.constraints = new ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class, Constraint.class);
     }
 
-    private Table(final ImmutableLinkedList<Character> name, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint> constraints) {
+    Table(final ImmutableLinkedList<Character> name, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint> constraints) {
         this.name = name;
         this.columns = this.completeColumnDetails(columns, columns.startNode(), this.getPrimaryKey(constraints.startNode()));
         this.constraints = this.addColumnConstraintsToTableConstraints(constraints, this.columns.startNode());
-    }
-
-    public final static Table newInstance(String name) {
-        return new Table(Utils.toImmutableLinkedList(name));
-    }
-
-    public final static Table newInstance(final ImmutableLinkedList<Character> name, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Constraint> constraints) {
-        return new Table(name, columns, constraints);
     }
 
     final PrimaryKey getPrimaryKey() {
@@ -226,7 +225,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(this.name == null || ((Table)obj).name == null) {
                 return false;
             } else {
-                if (!(this.name.equals(((Table) obj).name))) {
+                if (!(this.name.equals(((Table)obj).name))) {
                     return false;
                 }
             }
@@ -235,7 +234,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(this.columns == null || ((Table)obj).columns == null) {
                 return false;
             } else {
-                if (!(this.columns.equals(((Table) obj).columns))) {
+                if (!(this.columns.equals(((Table)obj).columns))) {
                     return false;
                 }
             }
@@ -244,7 +243,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(this.constraints == null || ((Table)obj).constraints == null) {
                 return false;
             } else {
-                if (!(this.constraints.equals(((Table) obj).constraints))) {
+                if (!(this.constraints.equals(((Table)obj).constraints))) {
                     return false;
                 }
             }
@@ -528,28 +527,28 @@ public final class Table implements ITable, Serializable, Cloneable {
                 return false;
             }
             if(!(this.name == null && ((FkTable)obj).name == null)) {
-                if(this.name == null || ((FkTable) obj).name == null) {
+                if(this.name == null || ((FkTable)obj).name == null) {
                     return false;
                 } else {
-                    if(!(this.name.equals(((FkTable) obj).name))) {
+                    if(!(this.name.equals(((FkTable)obj).name))) {
                         return false;
                     }
                 }
             }
             if(!(this.columns == null && ((FkTable)obj).columns == null)) {
-                if(this.columns == null || ((FkTable) obj).columns == null) {
+                if(this.columns == null || ((FkTable)obj).columns == null) {
                     return false;
                 } else {
-                    if(!(this.columns.equals(((FkTable) obj).columns))) {
+                    if(!(this.columns.equals(((FkTable)obj).columns))) {
                         return false;
                     }
                 }
             }
             if(!(this.constraints == null && ((FkTable)obj).constraints == null)) {
-                if(this.constraints == null || ((FkTable) obj).constraints == null) {
+                if(this.constraints == null || ((FkTable)obj).constraints == null) {
                     return false;
                 } else {
-                    if(!(this.constraints.equals(((FkTable) obj).constraints))) {
+                    if(!(this.constraints.equals(((FkTable)obj).constraints))) {
                         return false;
                     }
                 }

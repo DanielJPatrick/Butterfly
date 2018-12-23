@@ -6,7 +6,7 @@ import java.io.Serializable;
 public final class Check extends Constraint implements Serializable, Cloneable{
     private final ImmutableLinkedList<Character> condition;
 
-    public Check(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> fromTableName, final ImmutableLinkedList<Character> condition) {
+    Check(final ImmutableLinkedList<Character> name, final ImmutableLinkedList<Character> fromTableName, final ImmutableLinkedList<Character> condition) {
         super(name, fromTableName);
         this.condition = condition;
     }

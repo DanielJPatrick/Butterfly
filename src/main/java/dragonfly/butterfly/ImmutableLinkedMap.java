@@ -524,10 +524,10 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
             return false;
         }
         if(!(this.startNode == null && ((ImmutableLinkedMap)obj).startNode == null)) {
-            if (this.startNode == null || ((ImmutableLinkedMap) obj).startNode == null) {
+            if (this.startNode == null || ((ImmutableLinkedMap)obj).startNode == null) {
                 return false;
             } else {
-                if ((!this.startNode.equals(((ImmutableLinkedMap) obj).startNode))) {
+                if ((!this.startNode.equals(((ImmutableLinkedMap)obj).startNode))) {
                     return false;
                 }
             }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 public final class Unique extends Constraint implements Serializable, Cloneable {
     private final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames;
 
-    public Unique(final ImmutableLinkedList<Character> name, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final ImmutableLinkedList<Character> fromTableName) {
+    Unique(final ImmutableLinkedList<Character> name, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final ImmutableLinkedList<Character> fromTableName) {
         super(name, fromTableName);
         this.columnNames = columnNames;
     }

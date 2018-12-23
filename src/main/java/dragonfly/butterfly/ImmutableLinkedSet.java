@@ -520,10 +520,10 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
             return false;
         }
         if(!(this.startNode == null && ((ImmutableLinkedSet)obj).startNode == null)) {
-            if (this.startNode == null || ((ImmutableLinkedSet) obj).startNode == null) {
+            if (this.startNode == null || ((ImmutableLinkedSet)obj).startNode == null) {
                 return false;
             } else {
-                if ((!this.startNode.equals(((ImmutableLinkedSet) obj).startNode))) {
+                if ((!this.startNode.equals(((ImmutableLinkedSet)obj).startNode))) {
                     return false;
                 }
             }

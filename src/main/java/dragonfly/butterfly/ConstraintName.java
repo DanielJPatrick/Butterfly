@@ -23,10 +23,10 @@ public final class ConstraintName implements Serializable, Cloneable {
             return false;
         }
         if(!(this.name == null && ((ConstraintName)obj).name == null)) {
-            if(this.name == null || ((ConstraintName) obj).name == null) {
+            if(this.name == null || ((ConstraintName)obj).name == null) {
                 return false;
             } else {
-                if(!(this.name.equals(((ConstraintName) obj).name))) {
+                if(!(this.name.equals(((ConstraintName)obj).name))) {
                     return false;
                 }
             }
