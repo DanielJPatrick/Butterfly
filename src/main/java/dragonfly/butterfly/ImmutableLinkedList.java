@@ -159,10 +159,24 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final ImmutableLinkedListNode<V> nodeToReplace, final ImmutableLinkedListNode<V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode, nodeToReplace) == 0) {
-                return new ImmutableLinkedListNode<V>(newNode.value(), this.update(newNode.next(), null, null));
+                return newNode;
             } else {
                 return new ImmutableLinkedListNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
+        } else {
+            return null;
+        }
+    }
+
+    private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final int indexToAddAt, final ImmutableLinkedListNode<V> newNode) {
+        if(currentNode != null) {
+            if (currentIndex == indexToAddAt) {
+                return newNode;
+            } else {
+                return new ImmutableLinkedListNode<V>(currentNode.value(), this.update(currentNode.next(), currentIndex + 1, indexToAddAt, newNode));
+            }
+        } else if(currentIndex == indexToAddAt) {
+            return newNode;
         } else {
             return null;
         }
@@ -172,46 +186,33 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         return this.set(new ImmutableLinkedListNode<V>(value, this.startNode));
     }
 
-    public final ImmutableLinkedList<V> remove(final int indexOfNode) {
-        if(this.startNode != null && this.comparator.compare(this.startNode, this.get(indexOfNode)) == 0) {
-            return this.set(this.startNode.next());
+    public final ImmutableLinkedList<V> add(final V value, final int indexToAddAt) {
+        if(indexToAddAt == 0) {
+            return this.set(new ImmutableLinkedListNode<V>(value, this.startNode));
+        } else if(indexToAddAt == this.length()) {
+            //return this.set(this.update(this.startNode, this.get(this.length() - 1), new ImmutableLinkedListNode<V>(this.get(this.length() - 1).value(), new ImmutableLinkedListNode<V>(value, null))));
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedListNode<V>(value, null)));
         } else {
-            return this.remove(this.get(indexOfNode), this.startNode, null, null, null);
+            //return this.set(this.update(this.startNode, this.get(indexToAddAt), new ImmutableLinkedListNode<V>(value, this.get(indexToAddAt))));
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedListNode<V>(value, this.get(indexToAddAt))));
+        }
+    }
+
+    public final ImmutableLinkedList<V> remove(final int indexOfNode) {
+        if (indexOfNode >= 0 && indexOfNode < this.length()) {
+            if (indexOfNode == 0) {
+                return this.set(this.get(1));
+            } else {
+                //return this.set(this.update(this.startNode, 0, indexOfNode - 1, new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+                return this.set(this.update(this.startNode, this.get(indexOfNode - 1), new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+            }
+        } else {
+            return this;
         }
     }
 
     public final ImmutableLinkedList<V> remove(final ImmutableLinkedListNode<V> nodeToRemove) {
-        if(this.startNode != null && this.comparator.compare(this.startNode, nodeToRemove) == 0) {
-            return this.set(this.startNode.next());
-        } else {
-            return this.remove(nodeToRemove, this.startNode, null, null, null);
-        }
-    }
-
-    private final ImmutableLinkedList<V> remove (final ImmutableLinkedListNode<V> nodeToRemove, final ImmutableLinkedListNode<V> currentNode, final Integer nextNodeCount, final ImmutableLinkedListNode<V> previousNode, final ImmutableLinkedListNode<V> nextNode) {
-        if(currentNode != null) {
-            if(currentNode.next() != null && this.comparator.compare(currentNode.next(), nodeToRemove) == 0) {
-                return this.remove(nodeToRemove, currentNode.next(), 2, currentNode, null);
-            } else {
-                if (nextNodeCount != null) {
-                    if (nextNodeCount - 1 == 0) {
-                        return this.remove(nodeToRemove, currentNode.next(), nextNodeCount - 1, previousNode, currentNode);
-                    } else if(nextNodeCount - 1 < 0) {
-                        return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedListNode<V>(previousNode.value(), nextNode)));
-                    } else {
-                        return this.remove(nodeToRemove, currentNode.next(), nextNodeCount - 1, previousNode, nextNode);
-                    }
-                } else {
-                    return this.remove(nodeToRemove, currentNode.next(), nextNodeCount, previousNode, nextNode);
-                }
-            }
-        } else {
-            if(previousNode != null) {
-                return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedListNode<V>(previousNode.value(), nextNode)));
-            } else {
-                return this;
-            }
-        }
+        return this.remove(this.indexOf(nodeToRemove));
     }
 
     public final ImmutableLinkedList<V> removeAll() {
@@ -274,24 +275,65 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         }
     }
 
-    public final int indexOf(final ImmutableLinkedList<V> subsetToFindIndex) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, this.comparator);
-    }
+    public final int indexOf(final V valueToFindIndex) {
+        return this.indexOf(valueToFindIndex, this.startNode, 0, new Comparator<V>() {
+            @Override
+            public int compare(V o1, V o2) {
+                if (o1 == null && o2 == null) {
+                    return 0;
+                } else if (o1 == null) {
+                    return -1;
+                } else if (o2 == null) {
+                    return 1;
+                }
 
-    public final int indexOf(final ImmutableLinkedList<V> subsetToFindIndex, final Comparator<ImmutableLinkedListNode<V>> comparator) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, comparator);
-    }
-
-    private final int indexOf(final ImmutableLinkedList<V> subsetToFindIndex, final int subsetIndex, final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final Comparator<ImmutableLinkedListNode<V>> comparator) {
-        if(subsetToFindIndex != null) {
-            if (currentNode != null) {
-                if (comparator.compare(subsetToFindIndex.get(subsetIndex), currentNode) == 0) {
-                    return this.indexOf(subsetToFindIndex, subsetIndex + 1, currentNode.next(), currentIndex, comparator);
+                if(o1.equals(o2)) {
+                    return 0;
                 } else {
-                    return this.indexOf(subsetToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
+                    if (o1.hashCode() >= o2.hashCode()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 }
             }
-            if (subsetIndex == subsetToFindIndex.length) {
+        });
+    }
+
+    public final int indexOf(final V valueToFindIndex, final Comparator<V> comparator) {
+        return this.indexOf(valueToFindIndex, this.startNode, 0, comparator);
+    }
+
+    private final int indexOf(final V valueToFindIndex, final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final Comparator<V> comparator) {
+        if(currentNode != null) {
+            if(comparator.compare(valueToFindIndex, currentNode.value()) == 0) {
+                return currentIndex;
+            } else {
+                return this.indexOf(valueToFindIndex, currentNode.next(), currentIndex + 1, comparator);
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    public final int indexOf(final ImmutableLinkedList<V> subListToFindIndex) {
+        return this.indexOf(subListToFindIndex, 0, this.startNode, 0, this.comparator);
+    }
+
+    public final int indexOf(final ImmutableLinkedList<V> subListToFindIndex, final Comparator<ImmutableLinkedListNode<V>> comparator) {
+        return this.indexOf(subListToFindIndex, 0, this.startNode, 0, comparator);
+    }
+
+    private final int indexOf(final ImmutableLinkedList<V> subListToFindIndex, final int subListIndex, final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final Comparator<ImmutableLinkedListNode<V>> comparator) {
+        if(subListToFindIndex != null) {
+            if (currentNode != null) {
+                if (comparator.compare(subListToFindIndex.get(subListIndex), currentNode) == 0) {
+                    return this.indexOf(subListToFindIndex, subListIndex + 1, currentNode.next(), currentIndex, comparator);
+                } else {
+                    return this.indexOf(subListToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
+                }
+            }
+            if (subListIndex == subListToFindIndex.length) {
                 return currentIndex;
             }
         }
@@ -306,15 +348,23 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         return this.indexOf(nodeToFind, comparator) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedList<V> subsetToFind) {
-        return this.indexOf(subsetToFind) != -1;
+    public final boolean contains(final V valueToFind) {
+        return this.indexOf(valueToFind) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedList<V> subsetToFind, final Comparator<ImmutableLinkedListNode<V>> comparator) {
-        return this.indexOf(subsetToFind, comparator) != -1;
+    public final boolean contains(final V valueToFind, final Comparator<V> comparator) {
+        return this.indexOf(valueToFind, comparator) != -1;
     }
 
-    public final ImmutableLinkedList<V> subset(final int startIndex, final int endIndex) {
+    public final boolean contains(final ImmutableLinkedList<V> subListToFind) {
+        return this.indexOf(subListToFind) != -1;
+    }
+
+    public final boolean contains(final ImmutableLinkedList<V> subListToFind, final Comparator<ImmutableLinkedListNode<V>> comparator) {
+        return this.indexOf(subListToFind, comparator) != -1;
+    }
+
+    public final ImmutableLinkedList<V> subList(final int startIndex, final int endIndex) {
         return this.set(this.get(startIndex)).replace(this.get(endIndex), new ImmutableLinkedListNode<V>(this.get(endIndex).value(), null));
     }
 
@@ -362,23 +412,23 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues() {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
+    public final V[] values() {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues(final boolean reverseOrder) {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
+    public final V[] values(final boolean reverseOrder) {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
     }
 
-    private final V[] getValues(final ImmutableLinkedList<V> immutableLinkedList, final V[] array, final boolean reverseOrder, final int currentIndex) {
+    private final V[] values(final ImmutableLinkedList<V> immutableLinkedList, final V[] array, final boolean reverseOrder, final int currentIndex) {
         if(currentIndex < immutableLinkedList.length) {
             if(reverseOrder) {
                 array[currentIndex] = immutableLinkedList.get(immutableLinkedList.length - 1 - currentIndex).value();
             } else {
                 array[currentIndex] = immutableLinkedList.get(currentIndex).value();
             }
-            immutableLinkedList.getValues(immutableLinkedList, array, reverseOrder, currentIndex + 1);
+            immutableLinkedList.values(immutableLinkedList, array, reverseOrder, currentIndex + 1);
         }
         return array;
     }

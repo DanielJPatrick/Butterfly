@@ -13,7 +13,7 @@ public abstract class ButterflyHelper {
 
     private static final String[] generateDatabaseSql(final ImmutableLinkedListNode<ImmutableLinkedList<Character>> currentNode, final String[] strSql, final int currentIndex) {
         if(currentNode != null) {
-            strSql[currentIndex] = Character.toString(currentNode.value().getValues(true));
+            strSql[currentIndex] = Character.toString(currentNode.value().values(true));
             return generateDatabaseSql(currentNode.next(), strSql, currentIndex + 1);
         } else {
             return strSql;

@@ -181,7 +181,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @SuppressWarnings("unchecked")
     private final ImmutableLinkedSet<V> create(final ImmutableLinkedSet<V> immutableLinkedSet, final ImmutableLinkedSetNode<V> startNode) {
-        return this.create(immutableLinkedSet, new ImmutableLinkedSet<V>(true, immutableLinkedSet.valueType, startNode, immutableLinkedSet.comparator), this.calculateLength(startNode) - 1);
+        return this.create(immutableLinkedSet, new ImmutableLinkedSet<V>(true, immutableLinkedSet.valueType, startNode, immutableLinkedSet.comparator), 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -190,10 +190,10 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
             ImmutableLinkedSetNode<V> existingNodeWithValue = filteredImmutableLinkedSet.get(rawImmutableLinkedSet.get(currentIndex).value());
             if(existingNodeWithValue == null) {
                 return this.create(new ImmutableLinkedSet<V>(true, filteredImmutableLinkedSet.valueType, new ImmutableLinkedSetNode<V>(rawImmutableLinkedSet.get(currentIndex).value(),
-                        filteredImmutableLinkedSet.startNode), filteredImmutableLinkedSet.comparator), rawImmutableLinkedSet, currentIndex - 1);
+                        filteredImmutableLinkedSet.startNode), filteredImmutableLinkedSet.comparator), rawImmutableLinkedSet, currentIndex + 1);
             }
             else {
-                return this.create(filteredImmutableLinkedSet, rawImmutableLinkedSet, currentIndex - 1);
+                return this.create(filteredImmutableLinkedSet, rawImmutableLinkedSet, currentIndex + 1);
             }
         } else {
             return filteredImmutableLinkedSet;
@@ -243,7 +243,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     private final ImmutableLinkedSetNode<V> update(final ImmutableLinkedSetNode<V> currentNode, final ImmutableLinkedSetNode<V> nodeToReplace, final ImmutableLinkedSetNode<V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode.value(), nodeToReplace.value()) == 0) {
-                return new ImmutableLinkedSetNode<V>(newNode.value(), this.update(newNode.next(), null, null));
+                return newNode;
             } else {
                 return new ImmutableLinkedSetNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
@@ -257,53 +257,24 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     }
 
     public final ImmutableLinkedSet<V> remove(final int indexOfNode) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.value(), this.get(indexOfNode).value()) == 0) {
-            return this.set(this.startNode.next());
+        if (indexOfNode >= 0 && indexOfNode < this.length()) {
+            if (indexOfNode == 0) {
+                return this.set(this.get(1));
+            } else {
+                //return this.set(this.update(this.startNode, 0, indexOfNode - 1, new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+                return this.set(this.update(this.startNode, this.get(indexOfNode - 1), new ImmutableLinkedSetNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+            }
         } else {
-            return this.remove(this.get(indexOfNode).value(), this.startNode, null, null, null);
+            return this;
         }
     }
 
     public final ImmutableLinkedSet<V> remove(final ImmutableLinkedSetNode<V> nodeToRemove) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.value(), nodeToRemove.value()) == 0) {
-            return this.set(this.startNode.next());
-        } else {
-            return this.remove(nodeToRemove.value(), this.startNode, null, null, null);
-        }
+        return this.remove(this.indexOf(nodeToRemove));
     }
 
     public final ImmutableLinkedSet<V> remove(final V valueToRemove) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.value(), valueToRemove) == 0) {
-            return this.set(this.startNode.next());
-        } else {
-            return this.remove(valueToRemove, this.startNode, null, null, null);
-        }
-    }
-
-    private final ImmutableLinkedSet<V> remove (final V valueToRemove, final ImmutableLinkedSetNode<V> currentNode, final Integer nextNodeCount, final ImmutableLinkedSetNode<V> previousNode, final ImmutableLinkedSetNode<V> nextNode) {
-        if(currentNode != null) {
-            if(currentNode.next() != null && this.comparator.compare(currentNode.next().value(), valueToRemove) == 0) {
-                return this.remove(valueToRemove, currentNode.next(), 2, currentNode, null);
-            } else {
-                if (nextNodeCount != null) {
-                    if (nextNodeCount - 1 == 0) {
-                        return this.remove(valueToRemove, currentNode.next(), nextNodeCount - 1, previousNode, currentNode);
-                    } else if(nextNodeCount - 1 < 0) {
-                        return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedSetNode<V>(previousNode.value(), nextNode)));
-                    } else {
-                        return this.remove(valueToRemove, currentNode.next(), nextNodeCount - 1, previousNode, nextNode);
-                    }
-                } else {
-                    return this.remove(valueToRemove, currentNode.next(), nextNodeCount, previousNode, nextNode);
-                }
-            }
-        } else {
-            if (previousNode != null) {
-                return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedSetNode<V>(previousNode.value(), nextNode)));
-            } else {
-                return this;
-            }
-        }
+        return this.remove(this.indexOf(valueToRemove));
     }
 
     public final ImmutableLinkedSet<V> removeAll() {
@@ -394,24 +365,24 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
         }
     }
 
-    public final int indexOf(final ImmutableLinkedSet<V> subsetToFindIndex) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, this.comparator);
+    public final int indexOf(final ImmutableLinkedSet<V> subSetToFindIndex) {
+        return this.indexOf(subSetToFindIndex, 0, this.startNode, 0, this.comparator);
     }
 
-    public final int indexOf(final ImmutableLinkedSet<V> subsetToFindIndex, final Comparator<V> comparator) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, comparator);
+    public final int indexOf(final ImmutableLinkedSet<V> subSetToFindIndex, final Comparator<V> comparator) {
+        return this.indexOf(subSetToFindIndex, 0, this.startNode, 0, comparator);
     }
 
-    private final int indexOf(final ImmutableLinkedSet<V> subsetToFindIndex, final int subsetIndex, final ImmutableLinkedSetNode<V> currentNode, final int currentIndex, final Comparator<V> comparator) {
-        if(subsetToFindIndex != null) {
-            if (currentNode != null) {
-                if (comparator.compare(subsetToFindIndex.get(subsetIndex).value(), currentNode.value()) == 0) {
-                    return this.indexOf(subsetToFindIndex, subsetIndex + 1, currentNode.next(), currentIndex, comparator);
+    private final int indexOf(final ImmutableLinkedSet<V> subSetToFindIndex, final int subSetIndex, final ImmutableLinkedSetNode<V> currentNode, final int currentIndex, final Comparator<V> comparator) {
+        if(subSetToFindIndex != null) {
+            if (subSetToFindIndex.get(subSetIndex) != null && currentNode != null) {
+                if (comparator.compare(subSetToFindIndex.get(subSetIndex).value(), currentNode.value()) == 0) {
+                    return this.indexOf(subSetToFindIndex, subSetIndex + 1, currentNode.next(), currentIndex, comparator);
                 } else {
-                    return this.indexOf(subsetToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
+                    return this.indexOf(subSetToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
                 }
             }
-            if (subsetIndex == subsetToFindIndex.length) {
+            if (subSetIndex == subSetToFindIndex.length) {
                 return currentIndex;
             }
         }
@@ -434,15 +405,15 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
         return this.indexOf(valueToFind, comparator) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedSet<V> subsetToFind) {
-        return this.indexOf(subsetToFind) != -1;
+    public final boolean contains(final ImmutableLinkedSet<V> subSetToFind) {
+        return this.indexOf(subSetToFind) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedSet<V> subsetToFind, final Comparator<V> comparator) {
-        return this.indexOf(subsetToFind, comparator) != -1;
+    public final boolean contains(final ImmutableLinkedSet<V> subSetToFind, final Comparator<V> comparator) {
+        return this.indexOf(subSetToFind, comparator) != -1;
     }
 
-    public final ImmutableLinkedSet<V> subset(final int startIndex, final int endIndex) {
+    public final ImmutableLinkedSet<V> subSet(final int startIndex, final int endIndex) {
         return this.set(this.get(startIndex)).replace(this.get(endIndex), new ImmutableLinkedSetNode<V>(this.get(endIndex).value(), null));
     }
 
@@ -490,23 +461,23 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues() {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
+    public final V[] values() {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues(final boolean reverseOrder) {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
+    public final V[] values(final boolean reverseOrder) {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
     }
 
-    private final V[] getValues(final ImmutableLinkedSet<V> immutableLinkedSet, final V[] array, final boolean reverseOrder, final int currentIndex) {
+    private final V[] values(final ImmutableLinkedSet<V> immutableLinkedSet, final V[] array, final boolean reverseOrder, final int currentIndex) {
         if(currentIndex < immutableLinkedSet.length) {
             if(reverseOrder) {
                 array[currentIndex] = immutableLinkedSet.get(immutableLinkedSet.length - 1 - currentIndex).value();
             } else {
                 array[currentIndex] = immutableLinkedSet.get(currentIndex).value();
             }
-            immutableLinkedSet.getValues(immutableLinkedSet, array, reverseOrder, currentIndex + 1);
+            immutableLinkedSet.values(immutableLinkedSet, array, reverseOrder, currentIndex + 1);
         }
         return array;
     }

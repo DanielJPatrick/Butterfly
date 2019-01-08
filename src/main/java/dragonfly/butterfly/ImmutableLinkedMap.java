@@ -116,7 +116,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         this.comparator = tempImmutableLinkedMap.comparator;
     }
 
-    ImmutableLinkedMap(final boolean createOnlyConstructor, final Class<K> keyType, final Class<V> valueType, final ImmutableLinkedMapNode<K, V> startNode, final Comparator<K> comparator) {
+    private ImmutableLinkedMap(final boolean createOnlyConstructor, final Class<K> keyType, final Class<V> valueType, final ImmutableLinkedMapNode<K, V> startNode, final Comparator<K> comparator) {
         this.keyType = keyType;
         this.valueType = valueType;
         this.startNode = startNode;
@@ -163,7 +163,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     @SuppressWarnings("unchecked")
     private final ImmutableLinkedMap<K, V> create(final ImmutableLinkedMap<K, V> immutableLinkedMap, final ImmutableLinkedMapNode<K, V> startNode) {
-        return this.create(immutableLinkedMap, new ImmutableLinkedMap<K, V>(true, immutableLinkedMap.keyType, immutableLinkedMap.valueType, startNode, immutableLinkedMap.comparator), this.calculateLength(startNode) - 1);
+        return this.create(immutableLinkedMap, new ImmutableLinkedMap<K, V>(true, immutableLinkedMap.keyType, immutableLinkedMap.valueType, startNode, immutableLinkedMap.comparator), 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -172,10 +172,10 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
             ImmutableLinkedMapNode<K, V> existingNodeWithKey = filteredImmutableLinkedMap.get(rawImmutableLinkedMap.get(currentIndex).key());
             if(existingNodeWithKey == null) {
                 return this.create(new ImmutableLinkedMap<K, V>(true, filteredImmutableLinkedMap.keyType, filteredImmutableLinkedMap.valueType, new ImmutableLinkedMapNode<K, V>(rawImmutableLinkedMap.get(currentIndex).key(),
-                        rawImmutableLinkedMap.get(currentIndex).value(), filteredImmutableLinkedMap.startNode), filteredImmutableLinkedMap.comparator), rawImmutableLinkedMap, currentIndex - 1);
+                        rawImmutableLinkedMap.get(currentIndex).value(), filteredImmutableLinkedMap.startNode), filteredImmutableLinkedMap.comparator), rawImmutableLinkedMap, currentIndex + 1);
             }
             else {
-                return this.create(filteredImmutableLinkedMap, rawImmutableLinkedMap, currentIndex - 1);
+                return this.create(filteredImmutableLinkedMap, rawImmutableLinkedMap, currentIndex + 1);
             }
         } else {
             return filteredImmutableLinkedMap;
@@ -225,7 +225,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     private final ImmutableLinkedMapNode<K, V> update(final ImmutableLinkedMapNode<K, V> currentNode, final ImmutableLinkedMapNode<K, V> nodeToReplace, final ImmutableLinkedMapNode<K, V> newNode) {
         if(currentNode != null) {
             if (nodeToReplace != null && this.comparator.compare(currentNode.key(), nodeToReplace.key()) == 0) {
-                return new ImmutableLinkedMapNode<K, V>(newNode.key(), newNode.value(), this.update(newNode.next(), null, null));
+                return newNode;
             } else {
                 return new ImmutableLinkedMapNode<K, V>(currentNode.key(), currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
             }
@@ -239,53 +239,24 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     }
 
     public final ImmutableLinkedMap<K, V> remove(final int indexOfNode) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.key(), this.get(indexOfNode).key()) == 0) {
-            return this.set(this.startNode.next());
+        if (indexOfNode >= 0 && indexOfNode < this.length()) {
+            if (indexOfNode == 0) {
+                return this.set(this.get(1));
+            } else {
+                //return this.set(this.update(this.startNode, 0, indexOfNode - 1, new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+                return this.set(this.update(this.startNode, this.get(indexOfNode - 1), new ImmutableLinkedMapNode<K, V>(this.get(indexOfNode - 1).key(), this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+            }
         } else {
-            return this.remove(this.get(indexOfNode).key(), this.startNode, null, null, null);
+            return this;
         }
     }
 
     public final ImmutableLinkedMap<K, V> remove(final ImmutableLinkedMapNode<K, V> nodeToRemove) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.key(), nodeToRemove.key()) == 0) {
-            return this.set(this.startNode.next());
-        } else {
-            return this.remove(nodeToRemove.key(), this.startNode, null, null, null);
-        }
+        return this.remove(this.indexOf(nodeToRemove));
     }
 
     public final ImmutableLinkedMap<K, V> remove(final K keyToRemove) {
-        if(this.startNode != null && this.comparator.compare(this.startNode.key(), keyToRemove) == 0) {
-            return this.set(this.startNode.next());
-        } else {
-            return this.remove(keyToRemove, this.startNode, null, null, null);
-        }
-    }
-
-    private final ImmutableLinkedMap<K, V> remove (final K keyToRemove, final ImmutableLinkedMapNode<K, V> currentNode, final Integer nextNodeCount, final ImmutableLinkedMapNode<K, V> previousNode, final ImmutableLinkedMapNode<K, V> nextNode) {
-        if(currentNode != null) {
-            if(currentNode.next() != null && this.comparator.compare(currentNode.next().key(), keyToRemove) == 0) {
-                return this.remove(keyToRemove, currentNode.next(), 2, currentNode, null);
-            } else {
-                if (nextNodeCount != null) {
-                    if (nextNodeCount - 1 == 0) {
-                        return this.remove(keyToRemove, currentNode.next(), nextNodeCount - 1, previousNode, currentNode);
-                    } else if(nextNodeCount - 1 < 0) {
-                        return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedMapNode<K, V>(previousNode.key(), previousNode.value(), nextNode)));
-                    } else {
-                        return this.remove(keyToRemove, currentNode.next(), nextNodeCount - 1, previousNode, nextNode);
-                    }
-                } else {
-                    return this.remove(keyToRemove, currentNode.next(), nextNodeCount, previousNode, nextNode);
-                }
-            }
-        } else {
-            if (previousNode != null) {
-                return this.set(this.update(this.startNode, previousNode, new ImmutableLinkedMapNode<K, V>(previousNode.key(), previousNode.value(), nextNode)));
-            } else {
-                return this;
-            }
-        }
+        return this.remove(this.indexOf(keyToRemove));
     }
 
     public final ImmutableLinkedMap<K, V> removeAll() {
@@ -376,24 +347,65 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         }
     }
 
-    public final int indexOf(final ImmutableLinkedMap<K, V> subsetToFindIndex) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, this.comparator);
-    }
+    public final int indexOfValue(final V valueToFindIndex) {
+        return this.indexOfValue(valueToFindIndex, this.startNode, 0, new Comparator<V>() {
+            @Override
+            public int compare(V o1, V o2) {
+                if (o1 == null && o2 == null) {
+                    return 0;
+                } else if (o1 == null) {
+                    return -1;
+                } else if (o2 == null) {
+                    return 1;
+                }
 
-    public final int indexOf(final ImmutableLinkedMap<K, V> subsetToFindIndex, final Comparator<K> comparator) {
-        return this.indexOf(subsetToFindIndex, 0, this.startNode, 0, comparator);
-    }
-
-    private final int indexOf(final ImmutableLinkedMap<K, V> subsetToFindIndex, final int subsetIndex, final ImmutableLinkedMapNode<K, V> currentNode, final int currentIndex, final Comparator<K> comparator) {
-        if(subsetToFindIndex != null) {
-            if (currentNode != null) {
-                if (comparator.compare(subsetToFindIndex.get(subsetIndex).key(), currentNode.key()) == 0) {
-                    return this.indexOf(subsetToFindIndex, subsetIndex + 1, currentNode.next(), currentIndex, comparator);
+                if(o1.equals(o2)) {
+                    return 0;
                 } else {
-                    return this.indexOf(subsetToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
+                    if (o1.hashCode() >= o2.hashCode()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 }
             }
-            if (subsetIndex == subsetToFindIndex.length) {
+        });
+    }
+
+    public final int indexOfValue(final V valueToFindIndex, final Comparator<V> comparator) {
+        return this.indexOfValue(valueToFindIndex, this.startNode, 0, comparator);
+    }
+
+    private final int indexOfValue(final V valueToFindIndex, final ImmutableLinkedMapNode<K, V> currentNode, final int currentIndex, final Comparator<V> comparator) {
+        if(currentNode != null) {
+            if(comparator.compare(valueToFindIndex, currentNode.value()) == 0) {
+                return currentIndex;
+            } else {
+                return this.indexOfValue(valueToFindIndex, currentNode.next(), currentIndex + 1, comparator);
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    public final int indexOf(final ImmutableLinkedMap<K, V> subMapToFindIndex) {
+        return this.indexOf(subMapToFindIndex, 0, this.startNode, 0, this.comparator);
+    }
+
+    public final int indexOf(final ImmutableLinkedMap<K, V> subMapToFindIndex, final Comparator<K> comparator) {
+        return this.indexOf(subMapToFindIndex, 0, this.startNode, 0, comparator);
+    }
+
+    private final int indexOf(final ImmutableLinkedMap<K, V> subMapToFindIndex, final int subMapIndex, final ImmutableLinkedMapNode<K, V> currentNode, final int currentIndex, final Comparator<K> comparator) {
+        if(subMapToFindIndex != null) {
+            if (subMapToFindIndex.get(subMapIndex) != null && currentNode != null) {
+                if (comparator.compare(subMapToFindIndex.get(subMapIndex).key(), currentNode.key()) == 0) {
+                    return this.indexOf(subMapToFindIndex, subMapIndex + 1, currentNode.next(), currentIndex, comparator);
+                } else {
+                    return this.indexOf(subMapToFindIndex, 0, this.get(currentIndex + 1), currentIndex + 1, comparator);
+                }
+            }
+            if (subMapIndex == subMapToFindIndex.length) {
                 return currentIndex;
             }
         }
@@ -416,15 +428,23 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         return this.indexOf(keyToFind, comparator) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedMap<K, V> subsetToFind) {
-        return this.indexOf(subsetToFind) != -1;
+    public final boolean containsValue(final V valueToFind) {
+        return this.indexOfValue(valueToFind) != -1;
     }
 
-    public final boolean contains(final ImmutableLinkedMap<K, V> subsetToFind, final Comparator<K> comparator) {
-        return this.indexOf(subsetToFind, comparator) != -1;
+    public final boolean containsValue(final V valueToFind, final Comparator<V> comparator) {
+        return this.indexOfValue(valueToFind, comparator) != -1;
     }
 
-    public final ImmutableLinkedMap<K, V> subset(final int startIndex, final int endIndex) {
+    public final boolean contains(final ImmutableLinkedMap<K, V> subMapToFind) {
+        return this.indexOf(subMapToFind) != -1;
+    }
+
+    public final boolean contains(final ImmutableLinkedMap<K, V> subMapToFind, final Comparator<K> comparator) {
+        return this.indexOf(subMapToFind, comparator) != -1;
+    }
+
+    public final ImmutableLinkedMap<K, V> subMap(final int startIndex, final int endIndex) {
         return this.set(this.get(startIndex)).replace(this.get(endIndex), new ImmutableLinkedMapNode<K, V>(this.get(endIndex).key(), this.get(endIndex).value(), null));
     }
 
@@ -472,45 +492,45 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public final K[] getKeys() {
-        return this.getKeys(this, (K[])Array.newInstance(this.keyType, this.length), false, 0);
+    public final K[] keys() {
+        return this.keys(this, (K[])Array.newInstance(this.keyType, this.length), false, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public final K[] getKeys(final boolean reverseOrder) {
-        return this.getKeys(this, (K[])Array.newInstance(this.keyType, this.length), reverseOrder, 0);
+    public final K[] keys(final boolean reverseOrder) {
+        return this.keys(this, (K[])Array.newInstance(this.keyType, this.length), reverseOrder, 0);
     }
 
-    private final K[] getKeys(final ImmutableLinkedMap<K, V> immutableLinkedMap, final K[] array, final boolean reverseOrder, final int currentIndex) {
+    private final K[] keys(final ImmutableLinkedMap<K, V> immutableLinkedMap, final K[] array, final boolean reverseOrder, final int currentIndex) {
         if(currentIndex < immutableLinkedMap.length) {
             if(reverseOrder) {
                 array[currentIndex] = immutableLinkedMap.get(immutableLinkedMap.length - 1 - currentIndex).key();
             } else {
                 array[currentIndex] = immutableLinkedMap.get(currentIndex).key();
             }
-            immutableLinkedMap.getKeys(immutableLinkedMap, array, reverseOrder, currentIndex + 1);
+            immutableLinkedMap.keys(immutableLinkedMap, array, reverseOrder, currentIndex + 1);
         }
         return array;
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues() {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
+    public final V[] values() {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), false, 0);
     }
 
     @SuppressWarnings("unchecked")
-    public final V[] getValues(final boolean reverseOrder) {
-        return this.getValues(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
+    public final V[] values(final boolean reverseOrder) {
+        return this.values(this, (V[])Array.newInstance(this.valueType, this.length), reverseOrder, 0);
     }
 
-    private final V[] getValues(final ImmutableLinkedMap<K, V> immutableLinkedMap, final V[] array, final boolean reverseOrder, final int currentIndex) {
+    private final V[] values(final ImmutableLinkedMap<K, V> immutableLinkedMap, final V[] array, final boolean reverseOrder, final int currentIndex) {
         if(currentIndex < immutableLinkedMap.length) {
             if(reverseOrder) {
                 array[currentIndex] = immutableLinkedMap.get(immutableLinkedMap.length - 1 - currentIndex).value();
             } else {
                 array[currentIndex] = immutableLinkedMap.get(currentIndex).value();
             }
-            immutableLinkedMap.getValues(immutableLinkedMap, array, reverseOrder, currentIndex + 1);
+            immutableLinkedMap.values(immutableLinkedMap, array, reverseOrder, currentIndex + 1);
         }
         return array;
     }
