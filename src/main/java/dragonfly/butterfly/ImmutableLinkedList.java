@@ -152,20 +152,9 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         return new ImmutableLinkedList<V>(this.valueType, comparator, values);
     }
 
+    @SuppressWarnings("unchecked")
     public ImmutableLinkedList<V> set(Comparator<ImmutableLinkedListNode<V>> comparator) {
-        return this.set(this.startNode, comparator);
-    }
-
-    private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final ImmutableLinkedListNode<V> nodeToReplace, final ImmutableLinkedListNode<V> newNode) {
-        if(currentNode != null) {
-            if (nodeToReplace != null && this.comparator.compare(currentNode, nodeToReplace) == 0) {
-                return newNode;
-            } else {
-                return new ImmutableLinkedListNode<V>(currentNode.value(), this.update(currentNode.next(), nodeToReplace, newNode));
-            }
-        } else {
-            return null;
-        }
+        return new ImmutableLinkedList<V>(this.valueType, this.startNode, comparator);
     }
 
     private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final int indexToAddAt, final ImmutableLinkedListNode<V> newNode) {
@@ -190,10 +179,8 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         if(indexToAddAt == 0) {
             return this.set(new ImmutableLinkedListNode<V>(value, this.startNode));
         } else if(indexToAddAt == this.length()) {
-            //return this.set(this.update(this.startNode, this.get(this.length() - 1), new ImmutableLinkedListNode<V>(this.get(this.length() - 1).value(), new ImmutableLinkedListNode<V>(value, null))));
             return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedListNode<V>(value, null)));
         } else {
-            //return this.set(this.update(this.startNode, this.get(indexToAddAt), new ImmutableLinkedListNode<V>(value, this.get(indexToAddAt))));
             return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedListNode<V>(value, this.get(indexToAddAt))));
         }
     }
@@ -203,8 +190,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
             if (indexOfNode == 0) {
                 return this.set(this.get(1));
             } else {
-                //return this.set(this.update(this.startNode, 0, indexOfNode - 1, new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
-                return this.set(this.update(this.startNode, this.get(indexOfNode - 1), new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
+                return this.set(this.update(this.startNode, 0, indexOfNode - 1, new ImmutableLinkedListNode<V>(this.get(indexOfNode - 1).value(), this.get(indexOfNode + 1))));
             }
         } else {
             return this;
@@ -240,19 +226,19 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     }
 
     public final ImmutableLinkedList<V> replace(final int indexOfNode, final ImmutableLinkedListNode<V> newNode) {
-        return this.set(this.update(this.startNode, this.get(indexOfNode), newNode));
+        return this.set(this.update(this.startNode, 0, indexOfNode, newNode));
     }
 
     public final ImmutableLinkedList<V> replace(final int indexOfNode, final V newValue) {
-        return this.set(this.update(this.startNode, this.get(indexOfNode), new ImmutableLinkedListNode<V>(newValue, this.get(indexOfNode).next())));
+        return this.set(this.update(this.startNode, 0, indexOfNode, new ImmutableLinkedListNode<V>(newValue, this.get(indexOfNode).next())));
     }
 
     public final ImmutableLinkedList<V> replace(final ImmutableLinkedListNode<V> nodeToReplace, final ImmutableLinkedListNode<V> newNode) {
-        return this.set(this.update(this.startNode, nodeToReplace, newNode));
+        return this.set(this.update(this.startNode, 0, this.indexOf(nodeToReplace), newNode));
     }
 
     public final ImmutableLinkedList<V> replace(final ImmutableLinkedListNode<V> nodeToReplace, final V newValue) {
-        return this.set(this.update(this.startNode, nodeToReplace, new ImmutableLinkedListNode<V>(newValue, nodeToReplace.next())));
+        return this.set(this.update(this.startNode, 0, this.indexOf(nodeToReplace), new ImmutableLinkedListNode<V>(newValue, nodeToReplace.next())));
     }
 
     public final int indexOf(final ImmutableLinkedListNode<V> nodeToFindIndex) {
@@ -381,7 +367,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
             if (mergeIndex == 0) {
                 return immutableLinkedListToMerge.replace(immutableLinkedListToMerge.get(immutableLinkedListToMerge.length - 1), new ImmutableLinkedListNode<V>(immutableLinkedListToMerge.get(immutableLinkedListToMerge.length - 1).value(), this.startNode));
             } else if (mergeIndex == this.length - 1) {
-                return this.replace(this.get(this.length - 1), new ImmutableLinkedListNode<V>(this.get(this.length - 1).value(), this.update(immutableLinkedListToMerge.startNode, null, null)));
+                return this.replace(this.get(this.length - 1), new ImmutableLinkedListNode<V>(this.get(this.length - 1).value(), immutableLinkedListToMerge.startNode));
             } else {
                 final ImmutableLinkedList<V> temp = this.replace(this.get(mergeIndex), new ImmutableLinkedListNode<V>(this.get(mergeIndex).value(), immutableLinkedListToMerge.startNode));
                 return temp.replace(temp.get(temp.length - 1), new ImmutableLinkedListNode<V>(temp.get(temp.length - 1).value(), this.get(mergeIndex + 1)));
