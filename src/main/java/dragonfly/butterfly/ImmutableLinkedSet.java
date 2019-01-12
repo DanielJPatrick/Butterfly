@@ -173,7 +173,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     @SuppressWarnings("unchecked")
     private final ImmutableLinkedSet<V> create(final ImmutableLinkedSet<V> immutableLinkedSet, final V[] values, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < values.length) {
-            return this.create(immutableLinkedSet.add(values[currentIndex]), values, currentIndex + 1);
+            return this.create(immutableLinkedSet.prepend(values[currentIndex]), values, currentIndex + 1);
         } else {
             return immutableLinkedSet;
         }
@@ -255,8 +255,22 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
         }
     }
 
-    public final ImmutableLinkedSet<V> add(final V value) {
+    public final ImmutableLinkedSet<V> prepend(final V value) {
         return this.set(new ImmutableLinkedSetNode<V>(value, this.startNode));
+    }
+
+    public final ImmutableLinkedSet<V> append(final V value) {
+        return this.add(value, this.length);
+    }
+
+    public final ImmutableLinkedSet<V> add(final V value, final int indexToAddAt) {
+        if(indexToAddAt == 0) {
+            return this.set(new ImmutableLinkedSetNode<V>(value, this.startNode));
+        } else if(indexToAddAt == this.length()) {
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedSetNode<V>(value, null)));
+        } else {
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedSetNode<V>(value, this.get(indexToAddAt))));
+        }
     }
 
     public final ImmutableLinkedSet<V> remove(final int indexOfNode) {

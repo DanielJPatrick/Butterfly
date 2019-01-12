@@ -18,10 +18,10 @@ public final class Schema implements Serializable, Cloneable {
     private final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> index(final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> immutableLinkedMap, final ITable[] tables, final int currentIndex) {
         if(tables.length > currentIndex) {
             if(tables[currentIndex] instanceof Table) {
-                return this.index(immutableLinkedMap.add(((Table)tables[currentIndex]).getName(), (Table)tables[currentIndex]), tables, currentIndex + 1);
+                return this.index(immutableLinkedMap.prepend(((Table)tables[currentIndex]).getName(), (Table)tables[currentIndex]), tables, currentIndex + 1);
             }
             if(tables[currentIndex] instanceof Table.FkTable) {
-                return this.index(immutableLinkedMap.add(((Table.FkTable)tables[currentIndex]).getName(), new Table(((Table.FkTable)tables[currentIndex]).getName(),
+                return this.index(immutableLinkedMap.prepend(((Table.FkTable)tables[currentIndex]).getName(), new Table(((Table.FkTable)tables[currentIndex]).getName(),
                         ((Table.FkTable)tables[currentIndex]).getColumns(), ((Table.FkTable)tables[currentIndex]).getConstraints())), tables, currentIndex + 1);
             }
             return this.index(immutableLinkedMap, tables, currentIndex + 1);

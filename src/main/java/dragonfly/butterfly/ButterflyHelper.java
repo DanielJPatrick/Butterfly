@@ -22,11 +22,11 @@ public abstract class ButterflyHelper {
 
     private static final ImmutableLinkedList<ImmutableLinkedList<Character>> generateTablesSql(final ImmutableLinkedList<ImmutableLinkedList<Character>> sql, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> tables, final int currentIndex) {
         if(tables.get(currentIndex) != null) {
-                return generateTablesSql(sql.add(generateConstraintsSql(generateColumnsSql(new ImmutableLinkedList<Character>().add(new Character('C')).add(new Character('R')).add(new Character('E')).add(new Character('A')).add(new Character('T')).add(new Character('E')).add(new Character(' ')).add(new Character('T'))
-                        .add(new Character('A')).add(new Character('B')).add(new Character('L')).add(new Character('E')).add(new Character(' '))
-                        .mergeStart(tables.get(currentIndex).value().getName()).add(new Character(' ')).add(new Character('(')), tables.get(currentIndex).value().getColumns(), 0, false), tables.get(currentIndex).value().getConstraints(), 0).add(new Character(')'))
-                        .add(new Character(' ')).add(new Character('W')).add(new Character('I')).add(new Character('T')).add(new Character('H')).add(new Character('O')).add(new Character('U')).add(new Character('T')).add(new Character(' '))
-                        .add(new Character('R')).add(new Character('O')).add(new Character('W')).add(new Character('I')).add(new Character('D'))), tables, currentIndex - 1);
+                return generateTablesSql(sql.prepend(generateConstraintsSql(generateColumnsSql(new ImmutableLinkedList<Character>().prepend(new Character('C')).prepend(new Character('R')).prepend(new Character('E')).prepend(new Character('A')).prepend(new Character('T')).prepend(new Character('E')).prepend(new Character(' ')).prepend(new Character('T'))
+                        .prepend(new Character('A')).prepend(new Character('B')).prepend(new Character('L')).prepend(new Character('E')).prepend(new Character(' '))
+                        .mergeStart(tables.get(currentIndex).value().getName()).prepend(new Character(' ')).prepend(new Character('(')), tables.get(currentIndex).value().getColumns(), 0, false), tables.get(currentIndex).value().getConstraints(), 0).prepend(new Character(')'))
+                        .prepend(new Character(' ')).prepend(new Character('W')).prepend(new Character('I')).prepend(new Character('T')).prepend(new Character('H')).prepend(new Character('O')).prepend(new Character('U')).prepend(new Character('T')).prepend(new Character(' '))
+                        .prepend(new Character('R')).prepend(new Character('O')).prepend(new Character('W')).prepend(new Character('I')).prepend(new Character('D'))), tables, currentIndex - 1);
         } else {
             return sql;
         }
@@ -36,10 +36,10 @@ public abstract class ButterflyHelper {
         if(currentIndex < columns.length()) {
             if(currentIndex != 0) {
                 if(!sqlColumnDividerAdded) {
-                    return generateColumnsSql(sql.add(new Character(',')).add(new Character(' ')), columns, currentIndex, true);
+                    return generateColumnsSql(sql.prepend(new Character(',')).prepend(new Character(' ')), columns, currentIndex, true);
                 }
             }
-            return generateColumnsSql(generateDefaultValueSql(generateNotNullSql(sql.mergeStart(columns.get(currentIndex).value().getName()).add(new Character(' ')).mergeStart(columns.get(currentIndex).value().getDataType()), columns.get(currentIndex).value().getNotNull()), columns.get(currentIndex).value().getDefaultValue()), columns, currentIndex + 1, false);
+            return generateColumnsSql(generateDefaultValueSql(generateNotNullSql(sql.mergeStart(columns.get(currentIndex).value().getName()).prepend(new Character(' ')).mergeStart(columns.get(currentIndex).value().getDataType()), columns.get(currentIndex).value().getNotNull()), columns.get(currentIndex).value().getDefaultValue()), columns, currentIndex + 1, false);
         } else {
             return sql;
         }
@@ -68,7 +68,7 @@ public abstract class ButterflyHelper {
         if(currentIndex < columnNames.length()) {
             if(currentIndex != 0) {
                 if(!sqlColumnDividerAdded) {
-                    return generateColumnNamesSql(sql.add(new Character(',')).add(new Character(' ')), columnNames, currentIndex, true);
+                    return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')), columnNames, currentIndex, true);
                 }
             }
             return generateColumnNamesSql(sql.mergeStart(columnNames.get(currentIndex).value()), columnNames, currentIndex + 1, false);
@@ -78,33 +78,33 @@ public abstract class ButterflyHelper {
     }
 
     private static final ImmutableLinkedList<Character> generatePrimaryKeySql(final ImmutableLinkedList<Character> sql, PrimaryKey primaryKey) {
-        return generateColumnNamesSql(sql.add(new Character(',')).add(new Character(' ')).add(new Character('C')).add(new Character('O')).add(new Character('N')).add(new Character('S')).add(new Character('T')).add(new Character('R'))
-                .add(new Character('A')).add(new Character('I')).add(new Character('N')).add(new Character('T')).add(new Character(' '))
-                .mergeStart(primaryKey.getName()).add(new Character(' ')).add(new Character('P')).add(new Character('R')).add(new Character('I')).add(new Character('M')).add(new Character('A'))
-                .add(new Character('R')).add(new Character('Y')).add(new Character(' ')).add(new Character('K')).add(new Character('E')).add(new Character('Y')).add(new Character(' '))
-                .add(new Character('(')), primaryKey.getColumnNames(), 0, false).add(new Character(')'));
+        return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O')).prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R'))
+                .prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
+                .mergeStart(primaryKey.getName()).prepend(new Character(' ')).prepend(new Character('P')).prepend(new Character('R')).prepend(new Character('I')).prepend(new Character('M')).prepend(new Character('A'))
+                .prepend(new Character('R')).prepend(new Character('Y')).prepend(new Character(' ')).prepend(new Character('K')).prepend(new Character('E')).prepend(new Character('Y')).prepend(new Character(' '))
+                .prepend(new Character('(')), primaryKey.getColumnNames(), 0, false).prepend(new Character(')'));
     }
 
     private static final ImmutableLinkedList<Character> generateUniqueSql(final ImmutableLinkedList<Character> sql, Unique unique) {
-        return generateColumnNamesSql(sql.add(new Character(',')).add(new Character(' ')).add(new Character('C')).add(new Character('O'))
-                .add(new Character('N')).add(new Character('S')).add(new Character('T')).add(new Character('R')).add(new Character('A')).add(new Character('I')).add(new Character('N')).add(new Character('T')).add(new Character(' '))
-                .mergeStart(unique.getName()).add(new Character(' ')).add(new Character('U')).add(new Character('N')).add(new Character('I')).add(new Character('Q')).add(new Character('U')).add(new Character('E'))
-                .add(new Character(' ')).add(new Character('(')), unique.getColumnNames(), 0, false).add(new Character(')'));
+        return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O'))
+                .prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R')).prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
+                .mergeStart(unique.getName()).prepend(new Character(' ')).prepend(new Character('U')).prepend(new Character('N')).prepend(new Character('I')).prepend(new Character('Q')).prepend(new Character('U')).prepend(new Character('E'))
+                .prepend(new Character(' ')).prepend(new Character('(')), unique.getColumnNames(), 0, false).prepend(new Character(')'));
     }
 
     @SuppressWarnings("unchecked")
     private static final ImmutableLinkedList<Character> generateIndexSql(final ImmutableLinkedList<Character> sql, Index index) {
-        return generateColumnNamesSql(sql.add(new Character(',')).add(new Character(' ')).add(new Character('C')).add(new Character('O'))
-                .add(new Character('N')).add(new Character('S')).add(new Character('T')).add(new Character('R')).add(new Character('A')).add(new Character('I')).add(new Character('N')).add(new Character('T')).add(new Character(' '))
-                .mergeStart(index.getName()).add(new Character(' ')).add(new Character('I')).add(new Character('N')).add(new Character('D')).add(new Character('E')).add(new Character('X'))
-                .add(new Character(' ')).add(new Character('(')), index.getColumnNames(), 0, false).add(new Character(')'));
+        return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O'))
+                .prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R')).prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
+                .mergeStart(index.getName()).prepend(new Character(' ')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('D')).prepend(new Character('E')).prepend(new Character('X'))
+                .prepend(new Character(' ')).prepend(new Character('(')), index.getColumnNames(), 0, false).prepend(new Character(')'));
     }
 
     @SuppressWarnings("unchecked")
     private static final ImmutableLinkedList<Character> generateNotNullSql(final ImmutableLinkedList<Character> sql, NotNull notNull) {
         if(notNull != null) {
-            return sql.add(new Character(' ')).add(new Character('N')).add(new Character('O')).add(new Character('T')).add(new Character(' ')).add(new Character('N')).add(new Character('U'))
-                    .add(new Character('L')).add(new Character('L'));
+            return sql.prepend(new Character(' ')).prepend(new Character('N')).prepend(new Character('O')).prepend(new Character('T')).prepend(new Character(' ')).prepend(new Character('N')).prepend(new Character('U'))
+                    .prepend(new Character('L')).prepend(new Character('L'));
         } else {
             return sql;
         }
@@ -113,8 +113,8 @@ public abstract class ButterflyHelper {
     @SuppressWarnings("unchecked")
     private static final ImmutableLinkedList<Character> generateDefaultValueSql(final ImmutableLinkedList<Character> sql, DefaultValue defaultValue) {
         if(defaultValue != null) {
-            return sql.add(new Character(' ')).add(new Character('D')).add(new Character('E')).add(new Character('F')).add(new Character('A')).add(new Character('U')).add(new Character('L'))
-                    .add(new Character('T')).add(new Character(' ')).add(new Character('\'')).mergeStart(defaultValue.getValue()).add(new Character('\''));
+            return sql.prepend(new Character(' ')).prepend(new Character('D')).prepend(new Character('E')).prepend(new Character('F')).prepend(new Character('A')).prepend(new Character('U')).prepend(new Character('L'))
+                    .prepend(new Character('T')).prepend(new Character(' ')).prepend(new Character('\'')).mergeStart(defaultValue.getValue()).prepend(new Character('\''));
         } else {
             return sql;
         }
@@ -122,20 +122,20 @@ public abstract class ButterflyHelper {
 
     @SuppressWarnings("unchecked")
     private static final ImmutableLinkedList<Character> generateForeignKeySql(final ImmutableLinkedList<Character> sql, ForeignKey foreignKey) {
-        return generateColumnNamesSql(sql.add(new Character(',')).add(new Character(' ')).add(new Character('C')).add(new Character('O')).add(new Character('N')).add(new Character('S')).add(new Character('T')).add(new Character('R')).add(new Character('A')).add(new Character('I')).add(new Character('N')).add(new Character('T')).add(new Character(' '))
-                .mergeStart(foreignKey.getName()).add(new Character(' ')).add(new Character('F')).add(new Character('O')).add(new Character('R')).add(new Character('E')).add(new Character('I')).add(new Character('G')).add(new Character('N')).add(new Character(' '))
-                .add(new Character('K')).add(new Character('E')).add(new Character('Y')).add(new Character(' ')).add(new Character('(')), new ImmutableLinkedSet<ImmutableLinkedList<Character>>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class).add(foreignKey.getFromColumnName()), 0, false)
-                .add(new Character(')')).add(new Character(' ')).add(new Character('R')).add(new Character('E')).add(new Character('F')).add(new Character('E')).add(new Character('R')).add(new Character('E')).add(new Character('N')).add(new Character('C')).add(new Character('E'))
-                .add(new Character('S')).add(new Character(' ')).mergeStart(foreignKey.getToTableName()).add(new Character('(')).mergeStart(foreignKey.getToColumnName()).add(new Character(')')).add(new Character(' ')).add(new Character('O')).add(new Character('N'))
-                .add(new Character(' ')).add(new Character('D')).add(new Character('E')).add(new Character('L')).add(new Character('E')).add(new Character('T')).add(new Character('E')).add(new Character(' ')).add(new Character('C')).add(new Character('A')).add(new Character('S'))
-                .add(new Character('C')).add(new Character('A')).add(new Character('D')).add(new Character('E'));
+        return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O')).prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R')).prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
+                .mergeStart(foreignKey.getName()).prepend(new Character(' ')).prepend(new Character('F')).prepend(new Character('O')).prepend(new Character('R')).prepend(new Character('E')).prepend(new Character('I')).prepend(new Character('G')).prepend(new Character('N')).prepend(new Character(' '))
+                .prepend(new Character('K')).prepend(new Character('E')).prepend(new Character('Y')).prepend(new Character(' ')).prepend(new Character('(')), new ImmutableLinkedSet<ImmutableLinkedList<Character>>((Class<ImmutableLinkedList<Character>>)(Class<?>)ImmutableLinkedList.class).prepend(foreignKey.getFromColumnName()), 0, false)
+                .prepend(new Character(')')).prepend(new Character(' ')).prepend(new Character('R')).prepend(new Character('E')).prepend(new Character('F')).prepend(new Character('E')).prepend(new Character('R')).prepend(new Character('E')).prepend(new Character('N')).prepend(new Character('C')).prepend(new Character('E'))
+                .prepend(new Character('S')).prepend(new Character(' ')).mergeStart(foreignKey.getToTableName()).prepend(new Character('(')).mergeStart(foreignKey.getToColumnName()).prepend(new Character(')')).prepend(new Character(' ')).prepend(new Character('O')).prepend(new Character('N'))
+                .prepend(new Character(' ')).prepend(new Character('D')).prepend(new Character('E')).prepend(new Character('L')).prepend(new Character('E')).prepend(new Character('T')).prepend(new Character('E')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('A')).prepend(new Character('S'))
+                .prepend(new Character('C')).prepend(new Character('A')).prepend(new Character('D')).prepend(new Character('E'));
     }
 
     private static final ImmutableLinkedList<Character> generateCheckSql(final ImmutableLinkedList<Character> sql, Check check) {
-        return sql.add(new Character(',')).add(new Character(' ')).add(new Character('C')).add(new Character('O')).add(new Character('N')).add(new Character('S')).add(new Character('T')).add(new Character('R'))
-                .add(new Character('A')).add(new Character('I')).add(new Character('N')).add(new Character('T')).add(new Character(' '))
-                .mergeStart(check.getName()).add(new Character(' ')).add(new Character('C')).add(new Character('H')).add(new Character('E')).add(new Character('C')).add(new Character('K'))
-                .add(new Character(' ')).add(new Character('(')).mergeStart(check.getCondition()).add(new Character(')'));
+        return sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O')).prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R'))
+                .prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
+                .mergeStart(check.getName()).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('H')).prepend(new Character('E')).prepend(new Character('C')).prepend(new Character('K'))
+                .prepend(new Character(' ')).prepend(new Character('(')).mergeStart(check.getCondition()).prepend(new Character(')'));
     }
 
     public static final void insert (SQLiteDatabase sqLiteDatabase, Object objectToInsert) {

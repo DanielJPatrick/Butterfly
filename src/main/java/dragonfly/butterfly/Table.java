@@ -110,7 +110,7 @@ public final class Table implements ITable, Serializable, Cloneable {
         if(currentNode != null) {
             if (currentNode.value() != null) {
                 if(currentNode.value().getNotNull() != null) {
-                    return this.addColumnNotNullConstraintsToTableConstraints(constraints.add(currentNode.value().getNotNull().getName(), currentNode.value().getNotNull()), currentNode.next());
+                    return this.addColumnNotNullConstraintsToTableConstraints(constraints.prepend(currentNode.value().getNotNull().getName(), currentNode.value().getNotNull()), currentNode.next());
                 }
             }
             return this.addColumnNotNullConstraintsToTableConstraints(constraints, currentNode.next());
@@ -123,7 +123,7 @@ public final class Table implements ITable, Serializable, Cloneable {
         if(currentNode != null) {
             if (currentNode.value() != null) {
                 if(currentNode.value().getDefaultValue() != null) {
-                    return this.addColumnDefaultValueConstraintsToTableConstraints(constraints.add(currentNode.value().getDefaultValue().getName(), currentNode.value().getDefaultValue()), currentNode.next());
+                    return this.addColumnDefaultValueConstraintsToTableConstraints(constraints.prepend(currentNode.value().getDefaultValue().getName(), currentNode.value().getDefaultValue()), currentNode.next());
                 }
             }
             return this.addColumnDefaultValueConstraintsToTableConstraints(constraints, currentNode.next());
@@ -136,7 +136,7 @@ public final class Table implements ITable, Serializable, Cloneable {
         if(currentNode != null) {
             if (currentNode.value() != null) {
                 if(currentNode.value().getForeignKey() != null) {
-                    return this.addColumnForeignKeyConstraintsToTableConstraints(constraints.add(currentNode.value().getForeignKey().getName(), currentNode.value().getForeignKey()), currentNode.next());
+                    return this.addColumnForeignKeyConstraintsToTableConstraints(constraints.prepend(currentNode.value().getForeignKey().getName(), currentNode.value().getForeignKey()), currentNode.next());
                 }
             }
             return this.addColumnForeignKeyConstraintsToTableConstraints(constraints, currentNode.next());
@@ -146,51 +146,51 @@ public final class Table implements ITable, Serializable, Cloneable {
     }
 
     public final FkTable addColumn(final String name, final String dataType) {
-        return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType))), this.constraints);
+        return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType))), this.constraints);
     }
 
     public final FkTable addColumn(final String name, final String dataType, final String defaultValue) {
-        return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue))), this.constraints);
+        return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue))), this.constraints);
     }
 
     public final FkTable addColumn(final String name, final String dataType, final boolean nullable) {
-        return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), nullable)), this.constraints);
+        return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), nullable)), this.constraints);
     }
 
     public final FkTable addColumn(final String name, final String dataType, final String defaultValue, final boolean nullable) {
-        return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue), nullable)), this.constraints);
+        return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue), nullable)), this.constraints);
     }
 
     public final Table addPrimaryKey(final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(PrimaryKey.class, this, null), new PrimaryKey(new ConstraintName(this.getNextConstraintName(PrimaryKey.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(PrimaryKey.class, this, null), new PrimaryKey(new ConstraintName(this.getNextConstraintName(PrimaryKey.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addPrimaryKey(final ConstraintName constraintName, final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new PrimaryKey(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new PrimaryKey(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addUnique(final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Unique.class, this, null), new Unique(new ConstraintName(this.getNextConstraintName(Unique.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Unique.class, this, null), new Unique(new ConstraintName(this.getNextConstraintName(Unique.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addUnique(final ConstraintName constraintName, final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Unique(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Unique(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addIndex(final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Index.class, this, null), new Index(new ConstraintName(this.getNextConstraintName(Index.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Index.class, this, null), new Index(new ConstraintName(this.getNextConstraintName(Index.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addIndex(final ConstraintName constraintName, final String... columnNames) {
-        return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Index(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+        return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Index(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
     }
 
     public final Table addCheck(final String condition) {
-        return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Check.class, this, null), new Check(new ConstraintName(this.getNextConstraintName(Check.class, this, null)).getName(), this.name, Utils.toImmutableLinkedList(condition))));
+        return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Check.class, this, null), new Check(new ConstraintName(this.getNextConstraintName(Check.class, this, null)).getName(), this.name, Utils.toImmutableLinkedList(condition))));
     }
 
     public final Table addCheck(final ConstraintName constraintName, final String condition) {
-        return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Check(constraintName.getName(), this.name, Utils.toImmutableLinkedList(condition))));
+        return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Check(constraintName.getName(), this.name, Utils.toImmutableLinkedList(condition))));
     }
 
     private final ImmutableLinkedList<Character> getNextConstraintName(final Class constraintType, final Table table, final Column column) {
@@ -378,7 +378,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(currentNode != null) {
                 if (currentNode.value() != null) {
                     if(currentNode.value().getNotNull() != null) {
-                        return this.addColumnNotNullConstraintsToTableConstraints(constraints.add(currentNode.value().getNotNull().getName(), currentNode.value().getNotNull()), currentNode.next());
+                        return this.addColumnNotNullConstraintsToTableConstraints(constraints.prepend(currentNode.value().getNotNull().getName(), currentNode.value().getNotNull()), currentNode.next());
                     }
                 }
                 return this.addColumnNotNullConstraintsToTableConstraints(constraints, currentNode.next());
@@ -391,7 +391,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(currentNode != null) {
                 if (currentNode.value() != null) {
                     if(currentNode.value().getDefaultValue() != null) {
-                        return this.addColumnDefaultValueConstraintsToTableConstraints(constraints.add(currentNode.value().getDefaultValue().getName(), currentNode.value().getDefaultValue()), currentNode.next());
+                        return this.addColumnDefaultValueConstraintsToTableConstraints(constraints.prepend(currentNode.value().getDefaultValue().getName(), currentNode.value().getDefaultValue()), currentNode.next());
                     }
                 }
                 return this.addColumnDefaultValueConstraintsToTableConstraints(constraints, currentNode.next());
@@ -404,7 +404,7 @@ public final class Table implements ITable, Serializable, Cloneable {
             if(currentNode != null) {
                 if (currentNode.value() != null) {
                     if(currentNode.value().getForeignKey() != null) {
-                        return this.addColumnForeignKeyConstraintsToTableConstraints(constraints.add(currentNode.value().getForeignKey().getName(), currentNode.value().getForeignKey()), currentNode.next());
+                        return this.addColumnForeignKeyConstraintsToTableConstraints(constraints.prepend(currentNode.value().getForeignKey().getName(), currentNode.value().getForeignKey()), currentNode.next());
                     }
                 }
                 return this.addColumnForeignKeyConstraintsToTableConstraints(constraints, currentNode.next());
@@ -414,51 +414,51 @@ public final class Table implements ITable, Serializable, Cloneable {
         }
 
         public final FkTable addColumn(final String name, final String dataType) {
-            return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType))), this.constraints);
+            return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType))), this.constraints);
         }
 
         public final FkTable addColumn(final String name, final String dataType, final String defaultValue) {
-            return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue))), this.constraints);
+            return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue))), this.constraints);
         }
 
         public final FkTable addColumn(final String name, final String dataType, final boolean nullable) {
-            return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), nullable)), this.constraints);
+            return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), nullable)), this.constraints);
         }
 
         public final FkTable addColumn(final String name, final String dataType, final String defaultValue, final boolean nullable) {
-            return new FkTable(this.name, this.columns.add(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue), nullable)), this.constraints);
+            return new FkTable(this.name, this.columns.prepend(Utils.toImmutableLinkedList(name), new Column(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(dataType), Utils.toImmutableLinkedList(defaultValue), nullable)), this.constraints);
         }
 
         public final Table addPrimaryKey(final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(PrimaryKey.class, this, null), new PrimaryKey(new ConstraintName(this.getNextConstraintName(PrimaryKey.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(PrimaryKey.class, this, null), new PrimaryKey(new ConstraintName(this.getNextConstraintName(PrimaryKey.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addPrimaryKey(final ConstraintName constraintName, final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new PrimaryKey(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new PrimaryKey(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addUnique(final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Unique.class, this, null), new Unique(new ConstraintName(this.getNextConstraintName(Unique.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Unique.class, this, null), new Unique(new ConstraintName(this.getNextConstraintName(Unique.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addUnique(final ConstraintName constraintName, final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Unique(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Unique(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addIndex(final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Index.class, this, null), new Index(new ConstraintName(this.getNextConstraintName(Index.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Index.class, this, null), new Index(new ConstraintName(this.getNextConstraintName(Index.class, this, null)).getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addIndex(final ConstraintName constraintName, final String... columnNames) {
-            return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Index(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
+            return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Index(constraintName.getName(), Utils.toImmutableLinkedSet(columnNames), this.name)));
         }
 
         public final Table addCheck(final String condition) {
-            return new Table(this.name, this.columns, this.constraints.add(this.getNextConstraintName(Check.class, this, null), new Check(new ConstraintName(this.getNextConstraintName(Check.class, this, null)).getName(), this.name, Utils.toImmutableLinkedList(condition))));
+            return new Table(this.name, this.columns, this.constraints.prepend(this.getNextConstraintName(Check.class, this, null), new Check(new ConstraintName(this.getNextConstraintName(Check.class, this, null)).getName(), this.name, Utils.toImmutableLinkedList(condition))));
         }
 
         public final Table addCheck(final ConstraintName constraintName, final String condition) {
-            return new Table(this.name, this.columns, this.constraints.add(constraintName.getName(), new Check(constraintName.getName(), this.name, Utils.toImmutableLinkedList(condition))));
+            return new Table(this.name, this.columns, this.constraints.prepend(constraintName.getName(), new Check(constraintName.getName(), this.name, Utils.toImmutableLinkedList(condition))));
         }
 
         // Creates a foreign key from the last added Column

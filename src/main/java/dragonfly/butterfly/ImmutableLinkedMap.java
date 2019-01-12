@@ -155,7 +155,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
 
     private final ImmutableLinkedMap<K, V> create(final ImmutableLinkedMap<K, V> immutableLinkedMap, final Map.Entry<K, V>[] entries, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < entries.length) {
-            return this.create(immutableLinkedMap.add(entries[currentIndex].getKey(), entries[currentIndex].getValue()), entries, currentIndex + 1);
+            return this.create(immutableLinkedMap.prepend(entries[currentIndex].getKey(), entries[currentIndex].getValue()), entries, currentIndex + 1);
         } else {
             return immutableLinkedMap;
         }
@@ -237,8 +237,22 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         }
     }
 
-    public final ImmutableLinkedMap<K, V> add(final K key, final V value) {
+    public final ImmutableLinkedMap<K, V> prepend(final K key, final V value) {
         return this.set(new ImmutableLinkedMapNode<K, V>(key, value, this.startNode));
+    }
+
+    public final ImmutableLinkedMap<K, V> append(final K key, final V value) {
+        return this.add(key, value, this.length);
+    }
+
+    public final ImmutableLinkedMap<K, V> add(final K key, final V value, final int indexToAddAt) {
+        if(indexToAddAt == 0) {
+            return this.set(new ImmutableLinkedMapNode<K, V>(key, value, this.startNode));
+        } else if(indexToAddAt == this.length()) {
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedMapNode<K, V>(key, value, null)));
+        } else {
+            return this.set(this.update(this.startNode, 0, indexToAddAt, new ImmutableLinkedMapNode<K, V>(key, value, this.get(indexToAddAt))));
+        }
     }
 
     public final ImmutableLinkedMap<K, V> remove(final int indexOfNode) {

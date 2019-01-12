@@ -31,7 +31,7 @@ abstract class Utils {
 
     private static final ImmutableLinkedList<Character> toImmutableLinkedList(final String stringToConvert, final ImmutableLinkedList<Character> characterImmutableLinkedList) {
         if(stringToConvert.length() > characterImmutableLinkedList.length()) {
-            return toImmutableLinkedList(stringToConvert, characterImmutableLinkedList.add(new Character(stringToConvert.charAt(characterImmutableLinkedList.length()))));
+            return toImmutableLinkedList(stringToConvert, characterImmutableLinkedList.prepend(new Character(stringToConvert.charAt(characterImmutableLinkedList.length()))));
         } else {
             return characterImmutableLinkedList;
         }
@@ -44,7 +44,7 @@ abstract class Utils {
 
     private static final ImmutableLinkedSet<ImmutableLinkedList<Character>> toImmutableLinkedSet(final String[] stringsToConvert, final ImmutableLinkedSet<ImmutableLinkedList<Character>> wordImmutableLinkedSet) {
         if(stringsToConvert.length > wordImmutableLinkedSet.length()) {
-            return toImmutableLinkedSet(stringsToConvert, wordImmutableLinkedSet.add(toImmutableLinkedList(stringsToConvert[wordImmutableLinkedSet.length()])));
+            return toImmutableLinkedSet(stringsToConvert, wordImmutableLinkedSet.prepend(toImmutableLinkedList(stringsToConvert[wordImmutableLinkedSet.length()])));
         } else {
             return wordImmutableLinkedSet;
         }

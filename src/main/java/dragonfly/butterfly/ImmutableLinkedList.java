@@ -110,7 +110,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     private final ImmutableLinkedList<V> create(final ImmutableLinkedList<V> immutableLinkedList, final V[] values, final int currentIndex) {
         if(currentIndex < values.length) {
-            return this.create(immutableLinkedList.add(values[currentIndex]), values, currentIndex + 1);
+            return this.create(immutableLinkedList.prepend(values[currentIndex]), values, currentIndex + 1);
         } else {
             return immutableLinkedList;
         }
@@ -171,8 +171,12 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         }
     }
 
-    public final ImmutableLinkedList<V> add(final V value) {
+    public final ImmutableLinkedList<V> prepend(final V value) {
         return this.set(new ImmutableLinkedListNode<V>(value, this.startNode));
+    }
+
+    public final ImmutableLinkedList<V> append(final V value) {
+        return this.add(value, this.length);
     }
 
     public final ImmutableLinkedList<V> add(final V value, final int indexToAddAt) {

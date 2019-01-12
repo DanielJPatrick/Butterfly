@@ -237,24 +237,32 @@ public final class Column implements Serializable, Cloneable {
     }
 
     public final boolean isAutoIncrementing() {
-        if(this.primaryKey != null && this.dataType.contains(new ImmutableLinkedList<Character>().add(new Character('i')).add(new Character('n')).add(new Character('t')),
+        if(this.primaryKey != null && this.dataType.contains(new ImmutableLinkedList<Character>().prepend(new Character('i')).prepend(new Character('n')).prepend(new Character('t')),
                 new Comparator<ImmutableLinkedListNode<Character>>() {
                     @Override
                     public final int compare(final ImmutableLinkedListNode<Character> o1, final ImmutableLinkedListNode<Character> o2) {
-                        if(o1 == null && o2 == null) {
+                        if (o1 == null && o2 == null) {
                             return 0;
-                        } else if(o1 == null || o2 == null) {
+                        } else if (o1 == null) {
                             return -1;
+                        } else if (o2 == null) {
+                            return 1;
                         }
                         if(o1.value() == null && o2.value() == null) {
                             return 0;
-                        } else if(o1.value() == null || o2.value() == null) {
+                        } else if(o1.value() == null) {
                             return -1;
+                        } else if(o2.value() == null) {
+                            return 1;
                         }
                         if(Character.toLowerCase(o1.value()).equals(Character.toLowerCase(o2.value()))) {
                             return 0;
                         } else {
-                            return -1;
+                            if(o1.value().hashCode() >= o2.value().hashCode()) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
                         }
                     }
                 }))
