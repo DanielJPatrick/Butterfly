@@ -48,7 +48,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         this.keyType = Object.class;
         this.valueType = Object.class;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.verify(startNode);
+        this.startNode = this.removeDuplicateKeys(startNode);
         this.length = this.calculateLength();
     }
 
@@ -56,7 +56,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         this.keyType = keyType;
         this.valueType = valueType;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.verify(startNode);
+        this.startNode = this.removeDuplicateKeys(startNode);
         this.length = this.calculateLength();
     }
 
@@ -64,7 +64,7 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         this.keyType = Object.class;
         this.valueType = Object.class;
         this.comparator = comparator;
-        this.startNode = this.verify(startNode);
+        this.startNode = this.removeDuplicateKeys(startNode);
         this.length = this.calculateLength();
     }
 
@@ -72,49 +72,41 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         this.keyType = keyType;
         this.valueType = valueType;
         this.comparator = comparator;
-        this.startNode = this.verify(startNode);
+        this.startNode = this.removeDuplicateKeys(startNode);
         this.length = this.calculateLength();
     }
 
-     /*
-
     public ImmutableLinkedMap(final Map<K, V> entries) {
-        final ImmutableLinkedMap<K, V> tempImmutableLinkedMap = this.create(new ImmutableLinkedMap<K, V>(), entries, 0);
-        this.keyType = tempImmutableLinkedMap.keyType;
-        this.valueType = tempImmutableLinkedMap.valueType;
-        this.startNode = tempImmutableLinkedMap.startNode;
-        this.length = tempImmutableLinkedMap.length;
-        this.comparator = tempImmutableLinkedMap.comparator;
+        this.keyType = Object.class;
+        this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateKeys(this.create(entries));
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedMap(final Class<K> keyType, final Class<V> valueType, final Map<K, V> entries) {
-        final ImmutableLinkedMap<K, V> tempImmutableLinkedMap = this.create(new ImmutableLinkedMap<K, V>(keyType, valueType), entries, 0);
-        this.keyType = tempImmutableLinkedMap.keyType;
-        this.valueType = tempImmutableLinkedMap.valueType;
-        this.startNode = tempImmutableLinkedMap.startNode;
-        this.length = tempImmutableLinkedMap.length;
-        this.comparator = tempImmutableLinkedMap.comparator;
+        this.keyType = keyType;
+        this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateKeys(this.create(entries));
+        this.length = this.calculateLength();
     }
 
-    public ImmutableLinkedMap(final Map<K, V> entries, final Comparator<K> comparator) {
-        final ImmutableLinkedMap<K, V> tempImmutableLinkedMap = this.create(new ImmutableLinkedMap<K, V>(comparator), entries, 0);
-        this.keyType = tempImmutableLinkedMap.keyType;
-        this.valueType = tempImmutableLinkedMap.valueType;
-        this.startNode = tempImmutableLinkedMap.startNode;
-        this.length = tempImmutableLinkedMap.length;
-        this.comparator = tempImmutableLinkedMap.comparator;
+    public ImmutableLinkedMap(final Comparator<K> comparator, final Map<K, V> entries) {
+        this.keyType = Object.class;
+        this.valueType = Object.class;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateKeys(this.create(entries));
+        this.length = this.calculateLength();
     }
 
-    public ImmutableLinkedMap(final Class<K> keyType, final Class<V> valueType, final Map<K, V> entries, final Comparator<K> comparator) {
-        final ImmutableLinkedMap<K, V> tempImmutableLinkedMap = this.create(new ImmutableLinkedMap<K, V>(keyType, valueType, comparator), entries, 0);
-        this.keyType = tempImmutableLinkedMap.keyType;
-        this.valueType = tempImmutableLinkedMap.valueType;
-        this.startNode = tempImmutableLinkedMap.startNode;
-        this.length = tempImmutableLinkedMap.length;
-        this.comparator = tempImmutableLinkedMap.comparator;
+    public ImmutableLinkedMap(final Class<K> keyType, final Class<V> valueType, final Comparator<K> comparator, final Map<K, V> entries) {
+        this.keyType = keyType;
+        this.valueType = valueType;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateKeys(this.create(entries));
+        this.length = this.calculateLength();
     }
-
-*/
 
     private final Comparator<K> createDefaultComparator() {
         return new Comparator<K>() {
@@ -140,29 +132,27 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         };
     }
 
-
-    //TODO: create linked nodes first then create map from startNode for efficiency
     @SuppressWarnings("unchecked")
-    private final ImmutableLinkedMap<K, V> create(final ImmutableLinkedMap<K, V> immutableLinkedMap, final Map<K, V> entries, final int currentIndex) {
-        return this.create(immutableLinkedMap, entries.entrySet().toArray(new Map.Entry[entries.size()]), currentIndex);
+    private final ImmutableLinkedMapNode<K, V> create(final Map<K, V> entries) {
+        return this.create(null, entries.entrySet().toArray(new Map.Entry[entries.size()]), entries.size() - 1);
     }
 
-    private final ImmutableLinkedMap<K, V> create(final ImmutableLinkedMap<K, V> immutableLinkedMap, final Map.Entry<K, V>[] entries, final int currentIndex) {
+    private final ImmutableLinkedMapNode<K, V> create(final ImmutableLinkedMapNode<K, V> startNode, final Map.Entry<K, V>[] entries, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < entries.length) {
-            return this.create(immutableLinkedMap.prepend(entries[currentIndex].getKey(), entries[currentIndex].getValue()), entries, currentIndex + 1);
+            return this.create(new ImmutableLinkedMapNode<K, V>(entries[currentIndex].getKey(), entries[currentIndex].getValue(), startNode), entries, currentIndex - 1);
         } else {
-            return immutableLinkedMap;
+            return startNode;
         }
     }
 
-    private final ImmutableLinkedMapNode<K, V> verify(final ImmutableLinkedMapNode<K, V> startNode) {
-        return this.verify(startNode, startNode);
+    private final ImmutableLinkedMapNode<K, V> removeDuplicateKeys(final ImmutableLinkedMapNode<K, V> startNode) {
+        return this.removeDuplicateKeys(startNode, startNode);
     }
 
-    private final ImmutableLinkedMapNode<K, V> verify(final ImmutableLinkedMapNode<K, V> startNode, final ImmutableLinkedMapNode<K, V> currentNode) {
+    private final ImmutableLinkedMapNode<K, V> removeDuplicateKeys(final ImmutableLinkedMapNode<K, V> startNode, final ImmutableLinkedMapNode<K, V> currentNode) {
         if(currentNode != null) {
             if (this.get(currentNode.key(), currentNode.next()) == null) {
-                return verify(startNode, currentNode.next());
+                return removeDuplicateKeys(startNode, currentNode.next());
             } else {
                 final int length = this.calculateLength(startNode, 0);
                 return removeDuplicateKeys(startNode, length, length - 1, null);
@@ -172,17 +162,17 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         }
     }
 
-    private final ImmutableLinkedMapNode<K, V> removeDuplicateKeys(final ImmutableLinkedMapNode<K, V> originalStartNode, final int originalLength, final int originalCurrentIndex, final ImmutableLinkedMapNode<K, V> modifiedStartNode) {
+    private final ImmutableLinkedMapNode<K, V> removeDuplicateKeys(final ImmutableLinkedMapNode<K, V> originalStartNode, final int originalLength, final int originalCurrentIndex, final ImmutableLinkedMapNode<K, V> noDuplicatesStartNode) {
         if(originalCurrentIndex >= 0 && originalCurrentIndex < originalLength) {
             final ImmutableLinkedMapNode<K, V> originalCurrentNode = this.get(originalCurrentIndex, originalStartNode, 0);
-            final ImmutableLinkedMapNode<K, V> previousNodeWithKey = this.get(originalCurrentNode.key(), modifiedStartNode);
+            final ImmutableLinkedMapNode<K, V> previousNodeWithKey = this.get(originalCurrentNode.key(), noDuplicatesStartNode);
             if(previousNodeWithKey == null) {
-                return this.removeDuplicateKeys(originalStartNode, originalLength, originalCurrentIndex - 1, new ImmutableLinkedMapNode<K, V>(originalCurrentNode.key(), originalCurrentNode.value(), modifiedStartNode));
+                return this.removeDuplicateKeys(originalStartNode, originalLength, originalCurrentIndex - 1, new ImmutableLinkedMapNode<K, V>(originalCurrentNode.key(), originalCurrentNode.value(), noDuplicatesStartNode));
             } else {
-                return this.removeDuplicateKeys(originalStartNode, originalLength, originalCurrentIndex - 1, modifiedStartNode);
+                return this.removeDuplicateKeys(originalStartNode, originalLength, originalCurrentIndex - 1, noDuplicatesStartNode);
             }
         } else {
-            return modifiedStartNode;
+            return noDuplicatesStartNode;
         }
     }
 
@@ -204,21 +194,19 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public final ImmutableLinkedMap<K, V> set(final ImmutableLinkedMapNode<K, V> startNode, final Comparator<K> comparator) {
+    public final ImmutableLinkedMap<K, V> set(final Comparator<K> comparator, final ImmutableLinkedMapNode<K, V> startNode) {
         return new ImmutableLinkedMap<K, V>(this.keyType, this.valueType, comparator, startNode);
     }
 
-    /*
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedMap<K, V> set(final Map<K, V> entries) {
-        return new ImmutableLinkedMap<K, V>(this.keyType, this.valueType, entries, this.comparator);
+        return new ImmutableLinkedMap<K, V>(this.keyType, this.valueType, this.comparator, entries);
     }
 
     @SuppressWarnings("unchecked")
-    public final ImmutableLinkedMap<K, V> set(final Map<K, V> entries, final Comparator<K> comparator) {
-        return new ImmutableLinkedMap<K, V>(this.keyType, this.valueType, entries, comparator);
+    public final ImmutableLinkedMap<K, V> set(final Comparator<K> comparator, final Map<K, V> entries) {
+        return new ImmutableLinkedMap<K, V>(this.keyType, this.valueType, comparator, entries);
     }
-*/
 
     @SuppressWarnings("unchecked")
     public ImmutableLinkedMap<K, V> set(Comparator<K> comparator) {
@@ -321,20 +309,12 @@ public final class ImmutableLinkedMap<K, V> implements Serializable, Cloneable {
         return this.set(this.update(this.startNode, 0, indexOfNode, newNode));
     }
 
-    public final ImmutableLinkedMap<K, V> replace(final int indexOfNode, final V newValue) {
-        return this.set(this.update(this.startNode, 0, indexOfNode, new ImmutableLinkedMapNode<K, V>(this.get(indexOfNode).key(), newValue, this.get(indexOfNode).next())));
-    }
-
     public final ImmutableLinkedMap<K, V> replace(final ImmutableLinkedMapNode<K, V> nodeToReplace, final ImmutableLinkedMapNode<K, V> newNode) {
         return this.set(this.update(this.startNode, 0, this.indexOf(nodeToReplace), newNode));
     }
 
-    public final ImmutableLinkedMap<K, V> replace(final ImmutableLinkedMapNode<K, V> nodeToReplace, final V newValue) {
-        return this.set(this.update(this.startNode, 0, this.indexOf(nodeToReplace), new ImmutableLinkedMapNode<K, V>(nodeToReplace.key(), newValue, nodeToReplace.next())));
-    }
-
-    public final ImmutableLinkedMap<K, V> replace(final K keyOfNode, final V newValue) {
-        return this.set(this.update(this.startNode, 0, this.indexOf(keyOfNode), new ImmutableLinkedMapNode<K, V>(this.get(keyOfNode).key(), newValue, this.get(keyOfNode).next())));
+    public final ImmutableLinkedMap<K, V> replace(final K keyOfNode, final ImmutableLinkedMapNode<K, V> newNode) {
+        return this.set(this.update(this.startNode, 0, this.indexOf(keyOfNode), newNode));
     }
 
     public final int indexOf(final ImmutableLinkedMapNode<K, V> nodeToFindIndex) {

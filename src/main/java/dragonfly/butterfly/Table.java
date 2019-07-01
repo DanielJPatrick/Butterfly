@@ -47,7 +47,7 @@ public final class Table implements ITable, Serializable, Cloneable {
     private final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> completeColumnDetails(ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, ImmutableLinkedMapNode<ImmutableLinkedList<Character>, Column> currentNode, PrimaryKey primaryKey) {
         if(currentNode != null) {
             if(currentNode.value() != null) {
-                // Currently can't give custom name to a notNull constraint. May add this functionality later.
+
                 final NotNull notNull;
                 if(currentNode.value().getNotNull() != null) {
                     if(currentNode.value().getNotNull().getName() != null && currentNode.value().getNotNull().getName().length() > 0) {
@@ -59,7 +59,6 @@ public final class Table implements ITable, Serializable, Cloneable {
                     notNull = null;
                 }
 
-                // Currently can't give custom name to a defaultValue constraint. May add this functionality later.
                 final DefaultValue defaultValue;
                 if(currentNode.value().getDefaultValue() != null) {
                     if(currentNode.value().getDefaultValue().getName() != null && currentNode.value().getDefaultValue().getName().length() > 0) {
@@ -71,7 +70,6 @@ public final class Table implements ITable, Serializable, Cloneable {
                     defaultValue = null;
                 }
 
-                // Don't need to check for if name set as it is checked when addForeignKey() is called. Leaving check here anyway as a safeguard.
                 final ForeignKey foreignKey;
                 if(currentNode.value().getForeignKey() != null) {
                     if(currentNode.value().getForeignKey().getName() != null && currentNode.value().getForeignKey().getName().length() > 0) {
@@ -315,7 +313,7 @@ public final class Table implements ITable, Serializable, Cloneable {
         private final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> completeColumnDetails(ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, ImmutableLinkedMapNode<ImmutableLinkedList<Character>, Column> currentNode, PrimaryKey primaryKey) {
             if(currentNode != null) {
                 if(currentNode.value() != null) {
-                    // Currently can't give custom name to a notNull constraint. May add this functionality later.
+
                     final NotNull notNull;
                     if(currentNode.value().getNotNull() != null) {
                         if(currentNode.value().getNotNull().getName() != null && currentNode.value().getNotNull().getName().length() > 0) {
@@ -327,7 +325,6 @@ public final class Table implements ITable, Serializable, Cloneable {
                         notNull = null;
                     }
 
-                    // Currently can't give custom name to a defaultValue constraint. May add this functionality later.
                     final DefaultValue defaultValue;
                     if(currentNode.value().getDefaultValue() != null) {
                         if(currentNode.value().getDefaultValue().getName() != null && currentNode.value().getDefaultValue().getName().length() > 0) {
@@ -339,7 +336,6 @@ public final class Table implements ITable, Serializable, Cloneable {
                         defaultValue = null;
                     }
 
-                    // Don't need to check for if name set as it is checked when addForeignKey() is called. Leaving check here anyway as a safeguard.
                     final ForeignKey foreignKey;
                     if(currentNode.value().getForeignKey() != null) {
                         if(currentNode.value().getForeignKey().getName() != null && currentNode.value().getForeignKey().getName().length() > 0) {
@@ -466,13 +462,14 @@ public final class Table implements ITable, Serializable, Cloneable {
             if (this.columns.length() > 0) {
                 if (this.columns.get(0) != null) {
                     if (this.columns.get(0).value() != null) {
-                        return new Table(this.name, this.columns.replace(0,
+                        return new Table(this.name, this.columns.replace(0, new ImmutableLinkedMapNode<ImmutableLinkedList<Character>, Column>(this.columns.get(0).key(),
                                 new Column(this.columns.get(0).value().getName(), this.columns.get(0).value().getFromTableName(),
                                         this.columns.get(0).value().getDataType(), this.columns.get(0).value().getDefaultValue(),
                                         this.columns.get(0).value().getNotNull(),
                                         new ForeignKey(this.getNextConstraintName(ForeignKey.class, this, this.columns.get(0).value()),
                                                 Utils.toImmutableLinkedList(toTableName), Utils.toImmutableLinkedList(toColumnName)),
-                                        this.columns.get(0).value().getPrimaryKey())
+                                        this.columns.get(0).value().getPrimaryKey()),
+                                this.columns.get(0).next())
                         ), this.constraints);
                     }
                 }
@@ -485,12 +482,13 @@ public final class Table implements ITable, Serializable, Cloneable {
             if (this.columns.length() > 0) {
                 if (this.columns.get(0) != null) {
                     if (this.columns.get(0).value() != null) {
-                        return new Table(this.name, this.columns.replace(0,
+                        return new Table(this.name, this.columns.replace(0, new ImmutableLinkedMapNode<ImmutableLinkedList<Character>, Column>(this.columns.get(0).key(),
                                 new Column(this.columns.get(0).value().getName(), this.columns.get(0).value().getFromTableName(),
                                         this.columns.get(0).value().getDataType(), this.columns.get(0).value().getDefaultValue(),
                                         this.columns.get(0).value().getNotNull(),
-                                        new ForeignKey(Utils.toImmutableLinkedList(name), Utils.toImmutableLinkedList(toTableName), Utils.toImmutableLinkedList(toColumnName)),
-                                        this.columns.get(0).value().getPrimaryKey())
+                                        new ForeignKey(name != null && name.length() > 0 ? Utils.toImmutableLinkedList(name) : this.getNextConstraintName(ForeignKey.class, this, this.columns.get(0).value()), Utils.toImmutableLinkedList(toTableName), Utils.toImmutableLinkedList(toColumnName)),
+                                        this.columns.get(0).value().getPrimaryKey()),
+                                this.columns.get(0).next())
                         ), this.constraints);
                     }
                 }
