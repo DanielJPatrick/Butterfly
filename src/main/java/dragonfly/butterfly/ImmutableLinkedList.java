@@ -135,12 +135,12 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedList<V> set(final ImmutableLinkedListNode<V> startNode) {
-        return new ImmutableLinkedList<V>(this.valueType, startNode, this.comparator);
+        return new ImmutableLinkedList<V>(this.valueType, this.comparator, startNode);
     }
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedList<V> set(final ImmutableLinkedListNode<V> startNode, final Comparator<ImmutableLinkedListNode<V>> comparator) {
-        return new ImmutableLinkedList<V>(this.valueType, startNode, comparator);
+        return new ImmutableLinkedList<V>(this.valueType, comparator, startNode);
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
 
     @SuppressWarnings("unchecked")
     public ImmutableLinkedList<V> set(Comparator<ImmutableLinkedListNode<V>> comparator) {
-        return new ImmutableLinkedList<V>(this.valueType, this.startNode, comparator);
+        return new ImmutableLinkedList<V>(this.valueType, comparator, this.startNode);
     }
 
     private final ImmutableLinkedListNode<V> update(final ImmutableLinkedListNode<V> currentNode, final int currentIndex, final int indexToAddAt, final ImmutableLinkedListNode<V> newNode) {
