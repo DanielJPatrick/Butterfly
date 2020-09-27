@@ -6,82 +6,78 @@ import java.lang.reflect.Array;
 
 public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     private final Class valueType;
+    private final Comparator<ImmutableLinkedListNode<V>> comparator;
     private final ImmutableLinkedListNode<V> startNode;
     private final int length;
-    private final Comparator<ImmutableLinkedListNode<V>> comparator;
 
     public ImmutableLinkedList() {
         this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
         this.startNode = null;
         this.length = 0;
-        this.comparator = this.createDefaultComparator();
     }
 
     public ImmutableLinkedList(final Class<V> valueType) {
         this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
         this.startNode = null;
         this.length = 0;
-        this.comparator = this.createDefaultComparator();
     }
 
     public ImmutableLinkedList(final Comparator<ImmutableLinkedListNode<V>> comparator) {
         this.valueType = Object.class;
+        this.comparator = comparator;
         this.startNode = null;
         this.length = 0;
-        this.comparator = comparator;
     }
 
     public ImmutableLinkedList(final Class<V> valueType, final Comparator<ImmutableLinkedListNode<V>> comparator) {
         this.valueType = valueType;
+        this.comparator = comparator;
         this.startNode = null;
         this.length = 0;
-        this.comparator = comparator;
     }
 
-    ImmutableLinkedList(final ImmutableLinkedListNode<V> startNode, final Comparator<ImmutableLinkedListNode<V>> comparator) {
+    ImmutableLinkedList(final Comparator<ImmutableLinkedListNode<V>> comparator, final ImmutableLinkedListNode<V> startNode) {
         this.valueType = Object.class;
-        this.startNode = startNode;
-        this.length = this.calculateLength(startNode);
         this.comparator = comparator;
+        this.startNode = startNode;
+        this.length = this.calculateLength();
     }
 
-    ImmutableLinkedList(final Class<V> valueType, final ImmutableLinkedListNode<V> startNode, final Comparator<ImmutableLinkedListNode<V>> comparator) {
+    ImmutableLinkedList(final Class<V> valueType, final Comparator<ImmutableLinkedListNode<V>> comparator, final ImmutableLinkedListNode<V> startNode) {
         this.valueType = valueType;
-        this.startNode = startNode;
-        this.length = this.calculateLength(startNode);
         this.comparator = comparator;
+        this.startNode = startNode;
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final V... values) {
-        final ImmutableLinkedList<V> tempImmutableLinkedList = this.create(new ImmutableLinkedList<V>(), values, 0);
-        this.valueType = tempImmutableLinkedList.valueType;
-        this.startNode = tempImmutableLinkedList.startNode;
-        this.length = tempImmutableLinkedList.length;
-        this.comparator = tempImmutableLinkedList.comparator;
+        this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.create(values);
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Class<V> valueType, final V... values) {
-        final ImmutableLinkedList<V> tempImmutableLinkedList = this.create(new ImmutableLinkedList<V>(valueType), values, 0);
-        this.valueType = tempImmutableLinkedList.valueType;
-        this.startNode = tempImmutableLinkedList.startNode;
-        this.length = tempImmutableLinkedList.length;
-        this.comparator = tempImmutableLinkedList.comparator;
+        this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.create(values);
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Comparator<ImmutableLinkedListNode<V>> comparator, final V... values) {
-        final ImmutableLinkedList<V> tempImmutableLinkedList = this.create(new ImmutableLinkedList<V>(comparator), values, 0);
-        this.valueType = tempImmutableLinkedList.valueType;
-        this.startNode = tempImmutableLinkedList.startNode;
-        this.length = tempImmutableLinkedList.length;
-        this.comparator = tempImmutableLinkedList.comparator;
+        this.valueType = Object.class;
+        this.comparator = comparator;
+        this.startNode = this.create(values);
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Class<V> valueType, final Comparator<ImmutableLinkedListNode<V>> comparator, final V... values) {
-        final ImmutableLinkedList<V> tempImmutableLinkedList = this.create(new ImmutableLinkedList<V>(valueType, comparator), values, 0);
-        this.valueType = tempImmutableLinkedList.valueType;
-        this.startNode = tempImmutableLinkedList.startNode;
-        this.length = tempImmutableLinkedList.length;
-        this.comparator = tempImmutableLinkedList.comparator;
+        this.valueType = valueType;
+        this.comparator = comparator;
+        this.startNode = this.create(values);
+        this.length = this.calculateLength();
     }
 
     private final Comparator<ImmutableLinkedListNode<V>> createDefaultComparator() {
@@ -108,17 +104,22 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
         };
     }
 
-    private final ImmutableLinkedList<V> create(final ImmutableLinkedList<V> immutableLinkedList, final V[] values, final int currentIndex) {
-        if(currentIndex < values.length) {
-            return this.create(immutableLinkedList.prepend(values[currentIndex]), values, currentIndex + 1);
+    @SuppressWarnings("unchecked")
+    private final ImmutableLinkedListNode<V> create(final V[] values) {
+        return this.create(null, values, values.length - 1);
+    }
+
+    private final ImmutableLinkedListNode<V> create(final ImmutableLinkedListNode<V> startNode, final V[] values, final int currentIndex) {
+        if(currentIndex >= 0 && currentIndex < values.length) {
+            return this.create(new ImmutableLinkedListNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
         } else {
-            return immutableLinkedList;
+            return startNode;
         }
     }
 
-    private final int calculateLength(final ImmutableLinkedListNode<V> startNode) {
-        if(startNode != null) {
-            return calculateLength(startNode.next(), 1);
+    private final int calculateLength() {
+        if(this.startNode != null) {
+            return calculateLength(this.startNode.next(), 1);
         } else {
             return 0;
         }
