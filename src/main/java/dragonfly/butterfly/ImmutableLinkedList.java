@@ -118,11 +118,7 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     }
 
     private final int calculateLength() {
-        if(this.startNode != null) {
-            return calculateLength(this.startNode.next(), 1);
-        } else {
-            return 0;
-        }
+        return calculateLength(this.startNode, 0);
     }
 
     private final int calculateLength(final ImmutableLinkedListNode<V> currentNode, final int currentLength) {

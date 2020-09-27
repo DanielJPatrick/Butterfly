@@ -2,6 +2,7 @@ package dragonfly.butterfly;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -13,137 +14,118 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     public ImmutableLinkedSet() {
         this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
         this.startNode = null;
         this.length = 0;
-        this.comparator = this.createDefaultComparator();
     }
 
     public ImmutableLinkedSet(final Class<V> valueType) {
         this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
         this.startNode = null;
         this.length = 0;
-        this.comparator = this.createDefaultComparator();
     }
 
     public ImmutableLinkedSet(final Comparator<V> comparator) {
         this.valueType = Object.class;
+        this.comparator = comparator;
         this.startNode = null;
         this.length = 0;
-        this.comparator = comparator;
     }
 
     public ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator) {
         this.valueType = valueType;
+        this.comparator = comparator;
         this.startNode = null;
         this.length = 0;
-        this.comparator = comparator;
     }
 
     ImmutableLinkedSet(final ImmutableLinkedSetNode<V> startNode) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(), startNode);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateValues(startNode);
+        this.length = this.calculateLength();
     }
 
     ImmutableLinkedSet(final Class<V> valueType, final ImmutableLinkedSetNode<V> startNode) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType), startNode);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateValues(startNode);
+        this.length = this.calculateLength();
     }
 
-    ImmutableLinkedSet(final ImmutableLinkedSetNode<V> startNode, final Comparator<V> comparator) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(comparator), startNode);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+    ImmutableLinkedSet(final Comparator<V> comparator, final ImmutableLinkedSetNode<V> startNode) {
+        this.valueType = Object.class;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateValues(startNode);
+        this.length = this.calculateLength();
     }
 
-    ImmutableLinkedSet(final Class<V> valueType, final ImmutableLinkedSetNode<V> startNode, final Comparator<V> comparator) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType, comparator), startNode);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+    ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator, final ImmutableLinkedSetNode<V> startNode) {
+        this.valueType = valueType;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateValues(startNode);
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final V... values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(), values, 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Class<V> valueType, final V... values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType), values, 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = valueType;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Comparator<V> comparator, final V... values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(comparator), values, 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = Object.class;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator, final V... values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType, comparator), values, 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = valueType;
+        this.comparator = comparator;
+        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.length = this.calculateLength();
     }
 
     @SuppressWarnings("unchecked")
     public ImmutableLinkedSet(final Set<V> values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(), (V[])values.toArray(), 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
+        this.valueType = Object.class;
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.create((V[])values.toArray());
+        this.length = this.calculateLength();
     }
 
     @SuppressWarnings("unchecked")
     public ImmutableLinkedSet(final Class<V> valueType, final Set<V> values) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType), (V[])values.toArray(), 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
-    }
-
-    @SuppressWarnings("unchecked")
-    public ImmutableLinkedSet(final Set<V> values, final Comparator<V> comparator) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(comparator), (V[])values.toArray(), 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
-    }
-
-    @SuppressWarnings("unchecked")
-    public ImmutableLinkedSet(final Class<V> valueType, final Set<V> values, final Comparator<V> comparator) {
-        final ImmutableLinkedSet<V> tempImmutableLinkedSet = this.create(new ImmutableLinkedSet<V>(valueType, comparator), (V[])values.toArray(), 0);
-        this.valueType = tempImmutableLinkedSet.valueType;
-        this.startNode = tempImmutableLinkedSet.startNode;
-        this.length = tempImmutableLinkedSet.length;
-        this.comparator = tempImmutableLinkedSet.comparator;
-    }
-
-    private ImmutableLinkedSet(final boolean createOnlyConstructor, final Class<V> valueType, final ImmutableLinkedSetNode<V> startNode, final Comparator<V> comparator) {
         this.valueType = valueType;
-        this.startNode = startNode;
-        this.length = this.calculateLength(this.startNode);
+        this.comparator = this.createDefaultComparator();
+        this.startNode = this.create((V[])values.toArray());
+        this.length = this.calculateLength();
+    }
+
+    @SuppressWarnings("unchecked")
+    public ImmutableLinkedSet(final Comparator<V> comparator, final Set<V> values) {
+        this.valueType = Object.class;
         this.comparator = comparator;
+        this.startNode = this.create((V[])values.toArray());
+        this.length = this.calculateLength();
+    }
+
+    @SuppressWarnings("unchecked")
+    public ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator, final Set<V> values) {
+        this.valueType = valueType;
+        this.comparator = comparator;
+        this.startNode = this.create((V[])values.toArray());
+        this.length = this.calculateLength();
     }
 
     private final Comparator<V> createDefaultComparator() {
@@ -171,41 +153,51 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    private final ImmutableLinkedSet<V> create(final ImmutableLinkedSet<V> immutableLinkedSet, final V[] values, final int currentIndex) {
+    private final ImmutableLinkedSetNode<V> create(final V[] values) {
+        return this.create(null, values, values.length - 1);
+    }
+
+    private final ImmutableLinkedSetNode<V> create(final ImmutableLinkedSetNode<V> startNode, final V[] values, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < values.length) {
-            return this.create(immutableLinkedSet.prepend(values[currentIndex]), values, currentIndex + 1);
+            return this.create(new ImmutableLinkedSetNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
         } else {
-            return immutableLinkedSet;
+            return startNode;
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private final ImmutableLinkedSet<V> create(final ImmutableLinkedSet<V> immutableLinkedSet, final ImmutableLinkedSetNode<V> startNode) {
-        return this.create(immutableLinkedSet, new ImmutableLinkedSet<V>(true, immutableLinkedSet.valueType, startNode, immutableLinkedSet.comparator), 0);
+    private final ImmutableLinkedSetNode<V> removeDuplicateValues(final ImmutableLinkedSetNode<V> startNode) {
+        return this.removeDuplicateValues(startNode, startNode);
     }
 
-    @SuppressWarnings("unchecked")
-    private final ImmutableLinkedSet<V> create(final ImmutableLinkedSet<V> filteredImmutableLinkedSet, final ImmutableLinkedSet<V> rawImmutableLinkedSet, final int currentIndex) {
-        if(currentIndex >= 0 && currentIndex < rawImmutableLinkedSet.length) {
-            ImmutableLinkedSetNode<V> existingNodeWithValue = filteredImmutableLinkedSet.get(rawImmutableLinkedSet.get(currentIndex).value());
-            if(existingNodeWithValue == null) {
-                return this.create(new ImmutableLinkedSet<V>(true, filteredImmutableLinkedSet.valueType, new ImmutableLinkedSetNode<V>(rawImmutableLinkedSet.get(currentIndex).value(),
-                        filteredImmutableLinkedSet.startNode), filteredImmutableLinkedSet.comparator), rawImmutableLinkedSet, currentIndex + 1);
-            }
-            else {
-                return this.create(filteredImmutableLinkedSet, rawImmutableLinkedSet, currentIndex + 1);
+    private final ImmutableLinkedSetNode<V> removeDuplicateValues(final ImmutableLinkedSetNode<V> startNode, final ImmutableLinkedSetNode<V> currentNode) {
+        if(currentNode != null) {
+            if (this.get(currentNode.value(), currentNode.next()) == null) {
+                return removeDuplicateValues(startNode, currentNode.next());
+            } else {
+                final int length = this.calculateLength(startNode, 0);
+                return removeDuplicateValues(startNode, length, length - 1, null);
             }
         } else {
-            return filteredImmutableLinkedSet;
+            return startNode;
         }
     }
 
-    private final int calculateLength(final ImmutableLinkedSetNode<V> startNode) {
-        if(startNode != null) {
-            return calculateLength(startNode.next(), 1);
+    private final ImmutableLinkedSetNode<V> removeDuplicateValues(final ImmutableLinkedSetNode<V> originalStartNode, final int originalLength, final int originalCurrentIndex, final ImmutableLinkedSetNode<V> noDuplicatesStartNode) {
+        if(originalCurrentIndex >= 0 && originalCurrentIndex < originalLength) {
+            final ImmutableLinkedSetNode<V> originalCurrentNode = this.get(originalCurrentIndex, originalStartNode, 0);
+            final ImmutableLinkedSetNode<V> previousNodeWithKey = this.get(originalCurrentNode.value(), noDuplicatesStartNode);
+            if(previousNodeWithKey == null) {
+                return this.removeDuplicateValues(originalStartNode, originalLength, originalCurrentIndex - 1, new ImmutableLinkedSetNode<V>(originalCurrentNode.value(), noDuplicatesStartNode));
+            } else {
+                return this.removeDuplicateValues(originalStartNode, originalLength, originalCurrentIndex - 1, noDuplicatesStartNode);
+            }
         } else {
-            return 0;
+            return noDuplicatesStartNode;
         }
+    }
+
+    private final int calculateLength() {
+        return calculateLength(this.startNode, 0);
     }
 
     private final int calculateLength(final ImmutableLinkedSetNode<V> currentNode, final int currentLength) {
@@ -218,27 +210,27 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedSet<V> set(final ImmutableLinkedSetNode<V> startNode) {
-        return new ImmutableLinkedSet<V>(this.valueType, startNode, this.comparator);
+        return new ImmutableLinkedSet<V>(this.valueType, this.comparator, startNode);
     }
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedSet<V> set(final ImmutableLinkedSetNode<V> startNode, final Comparator<V> comparator) {
-        return new ImmutableLinkedSet<V>(this.valueType, startNode, comparator);
+        return new ImmutableLinkedSet<V>(this.valueType, this.comparator, startNode);
     }
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedSet<V> set(final Set<V> values) {
-        return new ImmutableLinkedSet<V>(this.valueType, values, this.comparator);
+        return new ImmutableLinkedSet<V>(this.valueType, this.comparator, values);
     }
 
     @SuppressWarnings("unchecked")
     public final ImmutableLinkedSet<V> set(final Set<V> values, final Comparator<V> comparator) {
-        return new ImmutableLinkedSet<V>(this.valueType, values, comparator);
+        return new ImmutableLinkedSet<V>(this.valueType, comparator, values);
     }
 
     @SuppressWarnings("unchecked")
     public ImmutableLinkedSet<V> set(Comparator<V> comparator) {
-        return new ImmutableLinkedSet<V>(this.valueType, this.startNode, comparator);
+        return new ImmutableLinkedSet<V>(this.valueType, comparator, this.startNode);
     }
 
     private final ImmutableLinkedSetNode<V> update(final ImmutableLinkedSetNode<V> currentNode, final int currentIndex, final int indexToAddAt, final ImmutableLinkedSetNode<V> newNode) {
