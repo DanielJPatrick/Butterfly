@@ -55,28 +55,28 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     public ImmutableLinkedList(final V... values) {
         this.valueType = Object.class;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.create(values);
+        this.startNode = this.createNodes(values);
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Class<V> valueType, final V... values) {
         this.valueType = valueType;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.create(values);
+        this.startNode = this.createNodes(values);
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Comparator<ImmutableLinkedListNode<V>> comparator, final V... values) {
         this.valueType = Object.class;
         this.comparator = comparator;
-        this.startNode = this.create(values);
+        this.startNode = this.createNodes(values);
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedList(final Class<V> valueType, final Comparator<ImmutableLinkedListNode<V>> comparator, final V... values) {
         this.valueType = valueType;
         this.comparator = comparator;
-        this.startNode = this.create(values);
+        this.startNode = this.createNodes(values);
         this.length = this.calculateLength();
     }
 
@@ -105,13 +105,13 @@ public final class ImmutableLinkedList<V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    private final ImmutableLinkedListNode<V> create(final V[] values) {
-        return this.create(null, values, values.length - 1);
+    private final ImmutableLinkedListNode<V> createNodes(final V[] values) {
+        return this.createNodes(null, values, values.length - 1);
     }
 
-    private final ImmutableLinkedListNode<V> create(final ImmutableLinkedListNode<V> startNode, final V[] values, final int currentIndex) {
+    private final ImmutableLinkedListNode<V> createNodes(final ImmutableLinkedListNode<V> startNode, final V[] values, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < values.length) {
-            return this.create(new ImmutableLinkedListNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
+            return this.createNodes(new ImmutableLinkedListNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
         } else {
             return startNode;
         }

@@ -2,7 +2,6 @@ package dragonfly.butterfly;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -71,28 +70,28 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     public ImmutableLinkedSet(final V... values) {
         this.valueType = Object.class;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.startNode = this.removeDuplicateValues(this.createNodes(values));
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Class<V> valueType, final V... values) {
         this.valueType = valueType;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.startNode = this.removeDuplicateValues(this.createNodes(values));
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Comparator<V> comparator, final V... values) {
         this.valueType = Object.class;
         this.comparator = comparator;
-        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.startNode = this.removeDuplicateValues(this.createNodes(values));
         this.length = this.calculateLength();
     }
 
     public ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator, final V... values) {
         this.valueType = valueType;
         this.comparator = comparator;
-        this.startNode = this.removeDuplicateValues(this.create(values));
+        this.startNode = this.removeDuplicateValues(this.createNodes(values));
         this.length = this.calculateLength();
     }
 
@@ -100,7 +99,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     public ImmutableLinkedSet(final Set<V> values) {
         this.valueType = Object.class;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.create((V[])values.toArray());
+        this.startNode = this.createNodes((V[])values.toArray());
         this.length = this.calculateLength();
     }
 
@@ -108,7 +107,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     public ImmutableLinkedSet(final Class<V> valueType, final Set<V> values) {
         this.valueType = valueType;
         this.comparator = this.createDefaultComparator();
-        this.startNode = this.create((V[])values.toArray());
+        this.startNode = this.createNodes((V[])values.toArray());
         this.length = this.calculateLength();
     }
 
@@ -116,7 +115,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     public ImmutableLinkedSet(final Comparator<V> comparator, final Set<V> values) {
         this.valueType = Object.class;
         this.comparator = comparator;
-        this.startNode = this.create((V[])values.toArray());
+        this.startNode = this.createNodes((V[])values.toArray());
         this.length = this.calculateLength();
     }
 
@@ -124,7 +123,7 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     public ImmutableLinkedSet(final Class<V> valueType, final Comparator<V> comparator, final Set<V> values) {
         this.valueType = valueType;
         this.comparator = comparator;
-        this.startNode = this.create((V[])values.toArray());
+        this.startNode = this.createNodes((V[])values.toArray());
         this.length = this.calculateLength();
     }
 
@@ -153,13 +152,13 @@ public final class ImmutableLinkedSet<V> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    private final ImmutableLinkedSetNode<V> create(final V[] values) {
-        return this.create(null, values, values.length - 1);
+    private final ImmutableLinkedSetNode<V> createNodes(final V[] values) {
+        return this.createNodes(null, values, values.length - 1);
     }
 
-    private final ImmutableLinkedSetNode<V> create(final ImmutableLinkedSetNode<V> startNode, final V[] values, final int currentIndex) {
+    private final ImmutableLinkedSetNode<V> createNodes(final ImmutableLinkedSetNode<V> startNode, final V[] values, final int currentIndex) {
         if(currentIndex >= 0 && currentIndex < values.length) {
-            return this.create(new ImmutableLinkedSetNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
+            return this.createNodes(new ImmutableLinkedSetNode<V>(values[currentIndex], startNode), values, currentIndex - 1);
         } else {
             return startNode;
         }
