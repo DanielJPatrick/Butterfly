@@ -21,10 +21,10 @@ public abstract class ButterflyHelper {
     }
 
     private static final ImmutableLinkedList<ImmutableLinkedList<Character>> generateTablesSql(final ImmutableLinkedList<ImmutableLinkedList<Character>> sql, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Table> tables, final int currentIndex) {
-        if(tables.get(currentIndex) != null) {
+        if(currentIndex >= 0) {
                 return generateTablesSql(sql.prepend(generateConstraintsSql(generateColumnsSql(new ImmutableLinkedList<Character>().prepend(new Character('C')).prepend(new Character('R')).prepend(new Character('E')).prepend(new Character('A')).prepend(new Character('T')).prepend(new Character('E')).prepend(new Character(' ')).prepend(new Character('T'))
                         .prepend(new Character('A')).prepend(new Character('B')).prepend(new Character('L')).prepend(new Character('E')).prepend(new Character(' '))
-                        .mergeStart(tables.get(currentIndex).value().getName()).prepend(new Character(' ')).prepend(new Character('(')), tables.get(currentIndex).value().getColumns(), 0, false), tables.get(currentIndex).value().getConstraints(), 0).prepend(new Character(')'))
+                        .mergeStart(tables.get(currentIndex).value().getName()).prepend(new Character(' ')).prepend(new Character('(')), tables.get(currentIndex).value().getColumns(), tables.get(currentIndex).value().getColumns().length() - 1, false), tables.get(currentIndex).value().getConstraints(), 0).prepend(new Character(')'))
                         .prepend(new Character(' ')).prepend(new Character('W')).prepend(new Character('I')).prepend(new Character('T')).prepend(new Character('H')).prepend(new Character('O')).prepend(new Character('U')).prepend(new Character('T')).prepend(new Character(' '))
                         .prepend(new Character('R')).prepend(new Character('O')).prepend(new Character('W')).prepend(new Character('I')).prepend(new Character('D'))), tables, currentIndex - 1);
         } else {
@@ -33,13 +33,13 @@ public abstract class ButterflyHelper {
     }
 
     private static final ImmutableLinkedList<Character> generateColumnsSql(final ImmutableLinkedList<Character> sql, final ImmutableLinkedMap<ImmutableLinkedList<Character>, Column> columns, final int currentIndex, final boolean sqlColumnDividerAdded) {
-        if(currentIndex < columns.length()) {
-            if(currentIndex != 0) {
+        if(currentIndex >= 0) {
+            if(currentIndex != columns.length() - 1) {
                 if(!sqlColumnDividerAdded) {
                     return generateColumnsSql(sql.prepend(new Character(',')).prepend(new Character(' ')), columns, currentIndex, true);
                 }
             }
-            return generateColumnsSql(generateDefaultValueSql(generateNotNullSql(sql.mergeStart(columns.get(currentIndex).value().getName()).prepend(new Character(' ')).mergeStart(columns.get(currentIndex).value().getDataType()), columns.get(currentIndex).value().getNotNull()), columns.get(currentIndex).value().getDefaultValue()), columns, currentIndex + 1, false);
+            return generateColumnsSql(generateDefaultValueSql(generateNotNullSql(sql.mergeStart(columns.get(currentIndex).value().getName()).prepend(new Character(' ')).mergeStart(columns.get(currentIndex).value().getDataType()), columns.get(currentIndex).value().getNotNull()), columns.get(currentIndex).value().getDefaultValue()), columns, currentIndex - 1, false);
         } else {
             return sql;
         }
@@ -65,13 +65,13 @@ public abstract class ButterflyHelper {
     }
 
     private static final ImmutableLinkedList<Character> generateColumnNamesSql(final ImmutableLinkedList<Character> sql, final ImmutableLinkedSet<ImmutableLinkedList<Character>> columnNames, final int currentIndex, final boolean sqlColumnDividerAdded) {
-        if(currentIndex < columnNames.length()) {
-            if(currentIndex != 0) {
+        if(currentIndex >= 0) {
+            if(currentIndex != columnNames.length() - 1) {
                 if(!sqlColumnDividerAdded) {
                     return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')), columnNames, currentIndex, true);
                 }
             }
-            return generateColumnNamesSql(sql.mergeStart(columnNames.get(currentIndex).value()), columnNames, currentIndex + 1, false);
+            return generateColumnNamesSql(sql.mergeStart(columnNames.get(currentIndex).value()), columnNames, currentIndex - 1, false);
         } else {
             return sql;
         }
@@ -82,14 +82,14 @@ public abstract class ButterflyHelper {
                 .prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
                 .mergeStart(primaryKey.getName()).prepend(new Character(' ')).prepend(new Character('P')).prepend(new Character('R')).prepend(new Character('I')).prepend(new Character('M')).prepend(new Character('A'))
                 .prepend(new Character('R')).prepend(new Character('Y')).prepend(new Character(' ')).prepend(new Character('K')).prepend(new Character('E')).prepend(new Character('Y')).prepend(new Character(' '))
-                .prepend(new Character('(')), primaryKey.getColumnNames(), 0, false).prepend(new Character(')'));
+                .prepend(new Character('(')), primaryKey.getColumnNames(), primaryKey.getColumnNames().length() - 1, false).prepend(new Character(')'));
     }
 
     private static final ImmutableLinkedList<Character> generateUniqueSql(final ImmutableLinkedList<Character> sql, Unique unique) {
         return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O'))
                 .prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R')).prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
                 .mergeStart(unique.getName()).prepend(new Character(' ')).prepend(new Character('U')).prepend(new Character('N')).prepend(new Character('I')).prepend(new Character('Q')).prepend(new Character('U')).prepend(new Character('E'))
-                .prepend(new Character(' ')).prepend(new Character('(')), unique.getColumnNames(), 0, false).prepend(new Character(')'));
+                .prepend(new Character(' ')).prepend(new Character('(')), unique.getColumnNames(), unique.getColumnNames().length() - 1, false).prepend(new Character(')'));
     }
 
     @SuppressWarnings("unchecked")
@@ -97,7 +97,7 @@ public abstract class ButterflyHelper {
         return generateColumnNamesSql(sql.prepend(new Character(',')).prepend(new Character(' ')).prepend(new Character('C')).prepend(new Character('O'))
                 .prepend(new Character('N')).prepend(new Character('S')).prepend(new Character('T')).prepend(new Character('R')).prepend(new Character('A')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('T')).prepend(new Character(' '))
                 .mergeStart(index.getName()).prepend(new Character(' ')).prepend(new Character('I')).prepend(new Character('N')).prepend(new Character('D')).prepend(new Character('E')).prepend(new Character('X'))
-                .prepend(new Character(' ')).prepend(new Character('(')), index.getColumnNames(), 0, false).prepend(new Character(')'));
+                .prepend(new Character(' ')).prepend(new Character('(')), index.getColumnNames(), index.getColumnNames().length() - 1, false).prepend(new Character(')'));
     }
 
     @SuppressWarnings("unchecked")
@@ -138,7 +138,7 @@ public abstract class ButterflyHelper {
                 .prepend(new Character(' ')).prepend(new Character('(')).mergeStart(check.getCondition()).prepend(new Character(')'));
     }
 
-    public static final void insert (SQLiteDatabase sqLiteDatabase, Object objectToInsert) {
+    public static final void insert (Object objectToInsert) {
 
     }
 }
